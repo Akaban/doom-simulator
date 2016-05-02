@@ -1,13 +1,22 @@
-type t = {id : string; 
+type t = { id : int ;
           porig : Point.t; 
           pdest : Point.t;
+          ci : float;
+          ce : float
          }
+
+let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
+let idCount = compteur 0;;
 
 type tpos = L | R | C
 
-let new_segment xo yo xd yd = failwith "TODO"
+let new_segment xo yo xd yd = let id = idCount () in { id ; Point.new_point xo yo ; Point.new_point xd yd ; .0 ; 1.0 } 
 
-let get_position p s = failwith "TODO"
+let get_position p s = 
+     let z = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x)
+     in if z > 0 then L
+     else if z=0 then C
+     else R;;
 
 let split_segment d s = failwith "TODO"
 
