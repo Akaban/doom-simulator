@@ -12,9 +12,12 @@ let idCount = compteur 0;;
 
 type tpos = L | R | C
 
-let new_segment xo yo xd yd = let idc = idCount () in { id=idc ; porig=Point.new_point xo yo; pdest=Point.new_point xd yd; ci=0.0;ce=1.0 } 
+let new_segment xo yo xd yd = let idc = idCount () in { id=idc ; porig=Point.new_point xo yo; pdest=Point.new_point xd yd; ci= 0.0 ; ce = 1.0} 
+let new_segmentPoint p1 p2 = let idc = idCount () in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0}
 
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
+
+let originVector s = (s.pdest.x - s.porig.x,s.pdest.y - s.porig.y)
 
 let get_position p s =
      let z = get_z p s
@@ -22,16 +25,34 @@ let get_position p s =
      else if z=0 then C
      else R;;
 
-let split_segment d1 s left = 
-    let d = (d1.pdest.x - d1.porig.x) * (s.pdest.y - s.porig.y) - (d1.pdest.y - 
-            d1.porig.y) * (s.pdest.x - s.porig.x)
-    in let r = ((d1.porig.y - s.porig.y) * (s.pdest.x - s.porig.x) - (d1.porig.x -
-                s.porig.c) * (s.pdest.y - s.porig.y)) / d
-    in let s = ((
-    in if d=0 || c < 0 || c >= 1 then if left then (Some s,None) else (None,Some s)
-    else if c > 0 && c < 1 then if left then (*séparer*) else (*séparer reverse*)
-    else if left then split_segment
 
+(*les deux fonction suivantes sont à vérifier, en particulier pour l'intersection*)
+let coordInterception d s =
+    let (osx,osy) = originVector s
+    in let (odx,ody) = originVector d
+    in if osx=0 && odx=0 then None
+    else let cd = (d.pdest.x - d.porig.x) * (s.pdest.y - s.porig.y) - (d.pdest.y - 
+                 d.porig.y) * (s.pdest.x - s.porig.x)
+         in if cd=0 then None else
+         let cr = float_of_int ((d.porig.y - s.porig.y) * (s.pdest.x - s.porig.x) - (d.porig.x -
+                         s.porig.x) * (s.pdest.y - s.porig.y)) /. (float_of_int cd)
+         in let cs = float_of_int ((d.porig.y - s.porig.y) * (d.pdest.x - d.porig.x) - (d.porig.x
+                      - s.porig.x) * (d.pdest.y - d.porig.y)) /. (float_of_int cd)
+         in if cs >= s.ce || cs < s.ci then None
+               else Some cs;; 
+
+     
+let split_segment d s =
+   match (coordInterception d s) with
+    | None -> begin match (get_position s.porig d) with
+                | L -> (Some s,None)
+                | _ -> (None,Some s)
+              end
+    | Some p -> let s1 = {s with ce = p;
+                                id = idCount ()}
+                in let s2 = {s with ci=p;
+                                id = idCount ()}
+                in (Some s1,Some s2);;
     
 
 let split hd rest = failwith "TODO"
