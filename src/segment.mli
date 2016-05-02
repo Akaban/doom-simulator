@@ -1,7 +1,9 @@
 type t = {
-  id : string;
+  id : int;
   porig : Point.t; 
   pdest : Point.t;
+  ci : float;
+  ce : float
 }
 
 type tpos = L | R | C

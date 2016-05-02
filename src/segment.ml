@@ -1,3 +1,5 @@
+open Point
+
 type t = { id : int ;
           porig : Point.t; 
           pdest : Point.t;
@@ -10,7 +12,7 @@ let idCount = compteur 0;;
 
 type tpos = L | R | C
 
-let new_segment xo yo xd yd = let id = idCount () in { id ; Point.new_point xo yo ; Point.new_point xd yd ; .0 ; 1.0 } 
+let new_segment xo yo xd yd = let idc = idCount () in { id=idc ; porig=Point.new_point xo yo; pdest=Point.new_point xd yd; ci=0.0;ce=1.0 } 
 
 let get_position p s = 
      let z = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x)
