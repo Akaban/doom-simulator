@@ -15,6 +15,13 @@ type tpos = L | R | C
 let new_segment xo yo xd yd = let idc = idCount () in { id=idc ; porig=Point.new_point xo yo; pdest=Point.new_point xd yd; ci= 0.0 ; ce = 1.0} 
 let new_segmentPoint p1 p2 = let idc = idCount () in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0}
 
+let real_coord s =
+  let lx = s.pdest.x - s.porig.x
+  in let ly = s.pdest.y - s.porig.y
+  in let (xo,yo) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ci, float_of_int s.porig.y +. (float_of_int ly) *. s.ci)
+  in let (xd,yd) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ce, float_of_int s.porig.y +. (float_of_int ly) *. s.ce)
+  in ((xo,yo),(xd,yd))
+
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
 
 let originVector s = (s.pdest.x - s.porig.x,s.pdest.y - s.porig.y)
