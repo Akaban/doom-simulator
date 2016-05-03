@@ -10,7 +10,7 @@ let win_h = ref 800
 
 let mouse_sensitivity = ref 10
 
-let max_dist = ref 300
+let max_dist = ref 1000
 
 let fov = ref 60
 
