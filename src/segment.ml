@@ -80,4 +80,4 @@ let split hd r =
 let angle s =
   let a = s.pdest.y - s.porig.y
   in let b = s.pdest.x - s.porig.y
-  in truncate (Trigo.dtan (a / b))
+  in Trigo.dtan (a / b)
