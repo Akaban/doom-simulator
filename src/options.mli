@@ -13,6 +13,10 @@ val wall_h : int
 
 val fov : int
 
+val mouse_sensitivity : int
+
+val max_dist : int
+
 val step_dist : float
 
 val xmin : float

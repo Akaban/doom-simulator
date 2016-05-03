@@ -20,7 +20,7 @@ let real_coord s =
   in let ly = s.pdest.y - s.porig.y
   in let (xo,yo) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ci, float_of_int s.porig.y +. (float_of_int ly) *. s.ci)
   in let (xd,yd) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ce, float_of_int s.porig.y +. (float_of_int ly) *. s.ce)
-  in ((xo,yo),(xd,yd))
+  in (xo,yo),(xd,yd)
 
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
 
@@ -76,3 +76,8 @@ let split hd r =
              end
       | [] -> (l,r)
    in split_do r ([],[]);;
+
+let angle s =
+  let a = s.pdest.y - s.porig.y
+  in let b = s.pdest.x - s.porig.y
+  in truncate (Trigo.dtan (a / b))

@@ -8,6 +8,10 @@ let mode = ref TwoD
 let win_w = ref 800
 let win_h = ref 800
 
+let mouse_sensitivity = ref 10
+
+let max_dist = ref 300
+
 let fov = ref 60
 
 let step_dist = ref 10
@@ -58,6 +62,10 @@ let file = !file
 
 let win_w = !win_w
 let win_h = !win_h
+
+let mouse_sensitivity = !mouse_sensitivity
+
+let max_dist = !max_dist
 
 let xmin = float !xmin
 

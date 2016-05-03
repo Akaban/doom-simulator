@@ -10,7 +10,9 @@ let new_player pos pa = { pos=pos;pa=pa}
 
 type dir = Left | Right
 
-let rotate d p = failwith "TODO"
+let rotate d p = match d with
+  | Left -> p.pa <- p.pa - mouse_sensitivity
+  | Right -> p.pa <- p.pa + mouse_sensitivity
 
 type mv = MFwd | MBwd | MLeft | MRight
 
