@@ -6,7 +6,7 @@ type t = {
   mutable pa : int;
 }
 
-let new_player pos pa = failwith "TODO"
+let new_player pos pa = { pos=pos;pa=pa}
 
 type dir = Left | Right
 
