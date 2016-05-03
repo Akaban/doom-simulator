@@ -19,6 +19,8 @@ val max_dist : int
 
 val step_dist : float
 
+val size2d : int
+
 val xmin : float
 val xmax : float
 

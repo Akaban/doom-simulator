@@ -18,7 +18,8 @@ let display bsp p =
            draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
     in 
     let parseFunction3d s = failwith "TODO parse3D"
-    in let doParse = if Options.mode = Options.TwoD then parseFunction2d
-                   else parseFunction3d
-    in Bsp.parse doParse bsp (p.pos)
+    in match Options.mode with
+        | Options.TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y Options.size2d ;
+          set_color blue ; fill_circle p.pos.x p.pos.y Options.size2d ; set_color black
+        | Options.ThreeD -> failwith "TODO 3D"
 

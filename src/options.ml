@@ -5,6 +5,8 @@ let file = ref ""
 
 let mode = ref TwoD
 
+let size2d = ref 4
+
 let win_w = ref 800
 let win_h = ref 800
 
@@ -74,6 +76,8 @@ let floor_h = 0
 let wall_h = ceiling_h - floor_h
 
 let mode = !mode
+
+let size2d = !size2d
 
 let fov = !fov
 

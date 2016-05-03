@@ -1,6 +1,7 @@
 type t = {
   mutable pos : Point.t;
   mutable pa : int;
+  mutable oldpos : Point.t
 }
 
 val new_player : Point.t -> int -> t
