@@ -12,7 +12,7 @@ let display bsp p =
       let yd = float_of_int (s.pdest.y - p.pos.y) *. dcos (-(p.pa)) -. float_of_int (s.pdest.x - p.pos.x) *. dsin (-p.pa) in
       new_segment (truncate xo) (truncate yo) (truncate xd) (truncate yd) 
       in let parseFunction2d s =
-           let rotated = rotateSegment s in
+           let rotated = s in
            let rs = ref rotated in
            let (xo,yo),(xd,yd) = real_coord !rs in
            draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
