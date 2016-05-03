@@ -52,7 +52,10 @@ let split_segment d s =
                                 id = idCount ()}
                 in let s2 = {s with ci=p;
                                 id = idCount ()}
-                in (Some s1,Some s2);;
+                in begin match (get_position s.porig d) with
+                         | L -> (Some s1,Some s2)
+                         | _ -> (Some s2,Some s1)
+                   end;;
     
 
 let split hd rest = failwith "TODO"
