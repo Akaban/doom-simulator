@@ -64,5 +64,15 @@ let split_segment d s =
                          | _ -> (Some s2,Some s1)
                    end;;
     
-
-let split hd rest = failwith "TODO"
+let split hd r =
+  let rec split_do rest (l,r) = 
+    match rest with
+      | (t::ts) -> begin
+            match (split_segment hd t) with
+             | (Some s,None) -> split_do ts (s::l,r)
+             | (None,Some s) -> split_do ts (l,s::r)
+             | (Some s1,Some s2) -> split_do ts (s1::l,s2::r)
+             | _ -> assert false
+             end
+      | [] -> (l,r)
+   in split_do r ([],[]);;
