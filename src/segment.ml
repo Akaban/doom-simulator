@@ -11,7 +11,7 @@ type t = { id : int ;
           segLeft : t option
          }
 
-let toString s = Printf.sprintf "{id=%d;porig=%s;pdest=%s;ci=%f;ce=%f}" s.id (toString s.porig) (toString s.pdest) s.ci s.ce 
+
 
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
 let idCount = compteur 0;;
@@ -35,6 +35,9 @@ let angleWithPoint p1 p2 =
   in let b = float_of_int (p2.x - p1.x)
   in Trigo.datan (a/. b)
 
+
+let toString s = Printf.sprintf "{id=%d;porig=%s;pdest=%s;ci=%f;ce=%f;angle=%d}" s.id (toString s.porig) (toString s.pdest) s.ci s.ce (truncate (angle s)) 
+
 let to_f = float_of_int
 let to_i = int_of_float
 
@@ -46,21 +49,17 @@ let translateVect (dx,dy) alpha = new_point (to_i (dx *. Trigo.dcos alpha -. dy 
                                                (to_i ( dx *. Trigo.dsin alpha +. dy *. Trigo.dcos alpha))
 let translatePoint p vectPoint = new_point (p.x + vectPoint.x) (p.y + vectPoint.y)
 
-let new_segmentPoint p1 p2 = let idc = idCount () in 
-                             let angle = 90 - (truncate (angleWithPoint p1 p2)) in
-                             let step_dist = 10. in
-                             (*let bottomRight = new_point (to_i ((to_f p1.x +. step_dist) *. Trigo.dcos angle)) 
-                                              (to_i (to_f p1.y *. Trigo.dsin angle))
-                             in let bottomLeft = new_point (to_i ((to_f p1.x -. step_dist) *. Trigo.dcos angle))
-                                                           (to_i (to_f p1.y *. Trigo.dsin angle))
-                             in let topRight = new_point (to_i ((to_f p2.x +. step_dist) *. Trigo.dcos angle)) 
-                                              (to_i ((to_f p2.y  *. Trigo.dsin angle))
-                             in let topLeft = new_point (to_i ((to_f p2.x -. step_dist) *. Trigo.dcos angle))
-                                                           (to_i (to_f p2.y *. Trigo.dsin angle))*)
+let sgn x = if x < 0 then -1 else 1
+
+(*angles un peu sale, essayer de proprifier tout ça*)
+let new_segmentPoint p1 p2 = let idc = idCount () in
+                             let angle1 = truncate (angleWithPoint p1 p2) in
+                             let angle = 180 - angle1 mod 90 in
+                             let step_dist = Options.step_dist in
                              let bottomRight = translatePoint p1 (translateVect (step_dist,0.) angle)
-                             in let bottomLeft = translatePoint p1 (translateVect (-.step_dist,0.) angle) in
+                             in let bottomLeft = translatePoint p1 (translateVect (step_dist,0.) (angle+180)) in
                              let topRight = translatePoint p2 (translateVect (step_dist,0.) angle) in
-                             let topLeft = translatePoint p2 (translateVect (-.step_dist,0.) angle) 
+                             let topLeft = translatePoint p2 (translateVect (step_dist,0.) (angle+180)) 
                              in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0; 
                                 segBottom = Some (new_segmentPointSimple bottomLeft bottomRight);
                                 segLeft = Some (new_segmentPointSimple bottomLeft topLeft);
