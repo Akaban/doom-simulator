@@ -29,5 +29,5 @@ val xmax : float
 val scale : int
 val minimap : bool
  
-val debug : bool
+val debug : bool ref
 val debug_bsp : bool

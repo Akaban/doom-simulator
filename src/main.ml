@@ -24,7 +24,7 @@ let () =
                if ev.keypressed then begin
                  match keyToDir ev.key with
                   | Some m -> move m player bsp
-                  | _ -> () end;
+                  | _ -> Debug.debugKeys ev.key player bsp end;
                synchronize ();
            done;
        with Exit -> close_graph () ; exit 0;;

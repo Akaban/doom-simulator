@@ -29,9 +29,9 @@ let move d p bsp =
                   | MRight -> step, 0
             in let new_pos = new_point (p.pos.x + dx) (p.pos.y + dy)
             in begin match (detect_collision new_pos bsp) with
-                | Some s -> begin print_string ("Collision detecte avec " ^ Segment.toString s ^ " . Le segment problematique est colore en rouge. Clic gauche pour vu." ^ string_of_int s.Segment.id ^ "\n"); 
-                          flush stdout (*; Graphics.set_color Graphics.red ; Segment.drawCollisionZone s ; Graphics.wait_next_event [Graphics.Button_down] ; Graphics.set_color Graphics.black
-                          *)end
+                | Some s -> if !debug then begin
+                          print_string ("Collision detecte avec " ^ Segment.toString s ^ "\n"); 
+                          flush stdout end
                 | None -> p.oldpos <- p.pos ; p.pos <- new_pos
             end
           

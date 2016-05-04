@@ -15,7 +15,7 @@ let display bsp p =
       in let parseFunction2d s =
            let rotated = s in
            let rs = ref rotated in
-           drawSegment !rs ; set_color red ; drawCollisionZone !rs ; set_color black
+           drawSegment !rs 
     in 
     let parseFunction3d s = failwith "TODO parse3D"
     in match Options.mode with

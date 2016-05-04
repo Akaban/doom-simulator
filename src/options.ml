@@ -88,5 +88,7 @@ let step_dist = float !step_dist
 let scale = !scale
 let minimap = !minimap
 
-let debug = !debug
+let debug = ref false
 let debug_bsp = !debug_bsp
+
+
