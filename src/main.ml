@@ -23,9 +23,7 @@ let () =
                let ev=wait_next_event [Key_pressed] in
                if ev.keypressed then begin
                  match keyToDir ev.key with
-                  | Some m -> 
-                     
-                      move m player bsp
+                  | Some m -> move m player bsp
                   | _ -> () end;
                synchronize ();
            done;

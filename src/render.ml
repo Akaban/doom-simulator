@@ -4,6 +4,7 @@ open Trigo
 open Player
 open Point
 
+
 let display bsp p =
   let rotateSegment s =
       let xo = float_of_int (s.porig.x - p.pos.x) *. dcos (-(p.pa)) -. float_of_int (s.porig.y - p.pos.y) *. dsin (-(p.pa)) in
@@ -14,8 +15,7 @@ let display bsp p =
       in let parseFunction2d s =
            let rotated = s in
            let rs = ref rotated in
-           let (xo,yo),(xd,yd) = real_coord !rs in
-           draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
+           drawSegment !rs
     in 
     let parseFunction3d s = failwith "TODO parse3D"
     in match Options.mode with

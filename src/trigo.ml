@@ -13,7 +13,7 @@ let dcos a = cos (d_to_rad a)
 
 let dacos c = r_to_deg (acos c)
 
-let datan c = atan (d_to_rad c)
+let datan c = r_to_deg (atan c)
 
 let dsin a = sin (d_to_rad a)
 

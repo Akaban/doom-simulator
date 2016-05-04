@@ -21,6 +21,8 @@ val step_dist : float
 
 val size2d : int
 
+val wall_collision_size : int
+
 val xmin : float
 val xmax : float
 

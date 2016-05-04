@@ -79,6 +79,8 @@ let mode = !mode
 
 let size2d = !size2d
 
+let wall_collision_size = !step_dist / 2
+
 let fov = !fov
 
 let step_dist = float !step_dist

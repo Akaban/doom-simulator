@@ -1,19 +1,65 @@
 open Point
+open Options
 
 type t = { id : int ;
           porig : Point.t; 
           pdest : Point.t;
           ci : float;
-          ce : float
+          ce : float;
+          segBottom : t option;
+          segRight : t option;
+          segTop : t option;
+          segLeft : t option
          }
+
+let toString s = Printf.sprintf "{id=%d;porig=%s;pdest=%s;ci=%f;ce=%f}" s.id (toString s.porig) (toString s.pdest) s.ci s.ce 
 
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
 let idCount = compteur 0;;
 
+let fromSome default = function
+  | Some s -> s
+  | _ -> default
+
 type tpos = L | R | C
 
-let new_segment xo yo xd yd = let idc = idCount () in { id=idc ; porig=Point.new_point xo yo; pdest=Point.new_point xd yd; ci= 0.0 ; ce = 1.0} 
-let new_segmentPoint p1 p2 = let idc = idCount () in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0}
+let tangle s = (*tangente de l'angle du segment*)
+  let a = float_of_int (s.pdest.y - s.porig.y)
+  in let b = float_of_int (s.pdest.x - s.porig.y)
+  in a /. b
+
+let angle s = (*angle du segment*)
+ Trigo.datan (tangle s)
+
+let angleWithPoint p1 p2 =
+  let a = float_of_int (p2.y - p1.y)
+  in let b = float_of_int (p2.x - p1.x)
+  in Trigo.datan (a/. b)
+
+let to_f = float_of_int
+let to_i = int_of_float
+
+let new_segmentPointSimple p1 p2 = (*création d'un segment sans le rectangle*)
+  let idc = idCount () in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
+                            ; segRight = None ; segTop = None ; segLeft = None}
+
+let new_segmentPoint p1 p2 = let idc = idCount () in 
+                             let angle = truncate (angleWithPoint p1 p2) in
+                             let bottomRight = new_point (to_i ((to_f p1.x +. step_dist) *. Trigo.dcos angle)) 
+                                              (to_i (to_f p1.y *. Trigo.dsin angle))
+                             in let bottomLeft = new_point (to_i ((to_f p1.x -. step_dist) *. Trigo.dcos angle))
+                                                           (to_i (to_f p1.x *. Trigo.dsin angle))
+                             in let topRight = new_point (to_i ((to_f p2.x +. step_dist) *. Trigo.dcos angle)) 
+                                              (to_i (to_f p2.y *. Trigo.dsin angle))
+                             in let topLeft = new_point (to_i ((to_f p2.x -. step_dist) *. Trigo.dcos angle))
+                                                           (to_i (to_f p2.x *. Trigo.dsin angle))
+                             in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0; 
+                                segBottom = Some (new_segmentPointSimple bottomLeft bottomRight);
+                                segLeft = Some (new_segmentPointSimple bottomLeft topLeft);
+                                segTop = Some (new_segmentPointSimple topLeft topRight);
+                                segRight = Some (new_segmentPointSimple bottomRight topRight) }
+
+let new_segment xo yo xd yd = new_segmentPoint (new_point xo yo) (new_point xd yd) 
 
 let real_coord s =
   let lx = s.pdest.x - s.porig.x
@@ -21,6 +67,17 @@ let real_coord s =
   in let (xo,yo) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ci, float_of_int s.porig.y +. (float_of_int ly) *. s.ci)
   in let (xd,yd) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ce, float_of_int s.porig.y +. (float_of_int ly) *. s.ce)
   in (xo,yo),(xd,yd)
+
+let drawSegment s =
+  let (xo,yo),(xd,yd) = real_coord s in
+  Graphics.draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
+
+let drawCollisionZone s =
+  if s.segBottom = None then () 
+  else let getSome = fromSome s in
+  let (bottomRight,bottomLeft,topRight,topLeft) = ( (getSome s.segBottom).pdest, (getSome s.segBottom).porig, (getSome s.segTop).pdest, (getSome s.segTop).porig)
+  in let zone = [|bottomRight.x,bottomRight.y ; topRight.x , topRight.y ; topLeft.x, topLeft.y ; bottomLeft.x, bottomLeft.y|]
+  in Graphics.draw_poly zone
 
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
 
@@ -76,8 +133,4 @@ let split hd r =
              end
       | [] -> (l,r)
    in split_do r ([],[]);;
-
-let angle s =
-  let a = s.pdest.y - s.porig.y
-  in let b = s.pdest.x - s.porig.y
-  in Trigo.dtan (a / b)
+ 
