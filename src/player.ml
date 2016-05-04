@@ -26,7 +26,7 @@ let move d p bsp = match mode with
               | MFwd -> p.pos <- new_point p.pos.x (p.pos.y + step)
               | MBwd -> p.pos <- new_point p.pos.x (p.pos.y - step)
               | MLeft -> p.pos <- new_point (p.pos.x - step) p.pos.y
-              | MRight -> p.pos <- new_point (p.pos.x + step) p.pos.y
+              | MRight -> p.pos <- new_point (p.pos.x + step) p.pos.y (*ajouter pour la 2d la detection de collision*)
             end
   | ThreeD -> begin
               let dx, dy =
