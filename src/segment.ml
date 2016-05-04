@@ -1,5 +1,4 @@
 open Point
-open Options
 
 type t = { id : int ;
           porig : Point.t; 
@@ -43,16 +42,25 @@ let new_segmentPointSimple p1 p2 = (*création d'un segment sans le rectangle*)
   let idc = idCount () in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
                             ; segRight = None ; segTop = None ; segLeft = None}
 
+let translateVect (dx,dy) alpha = new_point (to_i (dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha)) 
+                                               (to_i ( dx *. Trigo.dsin alpha +. dy *. Trigo.dcos alpha))
+let translatePoint p vectPoint = new_point (p.x + vectPoint.x) (p.y + vectPoint.y)
+
 let new_segmentPoint p1 p2 = let idc = idCount () in 
-                             let angle = truncate (angleWithPoint p1 p2) in
-                             let bottomRight = new_point (to_i ((to_f p1.x +. step_dist) *. Trigo.dcos angle)) 
+                             let angle = 90 - (truncate (angleWithPoint p1 p2)) in
+                             let step_dist = 10. in
+                             (*let bottomRight = new_point (to_i ((to_f p1.x +. step_dist) *. Trigo.dcos angle)) 
                                               (to_i (to_f p1.y *. Trigo.dsin angle))
                              in let bottomLeft = new_point (to_i ((to_f p1.x -. step_dist) *. Trigo.dcos angle))
-                                                           (to_i (to_f p1.x *. Trigo.dsin angle))
+                                                           (to_i (to_f p1.y *. Trigo.dsin angle))
                              in let topRight = new_point (to_i ((to_f p2.x +. step_dist) *. Trigo.dcos angle)) 
-                                              (to_i (to_f p2.y *. Trigo.dsin angle))
+                                              (to_i ((to_f p2.y  *. Trigo.dsin angle))
                              in let topLeft = new_point (to_i ((to_f p2.x -. step_dist) *. Trigo.dcos angle))
-                                                           (to_i (to_f p2.x *. Trigo.dsin angle))
+                                                           (to_i (to_f p2.y *. Trigo.dsin angle))*)
+                             let bottomRight = translatePoint p1 (translateVect (step_dist,0.) angle)
+                             in let bottomLeft = translatePoint p1 (translateVect (-.step_dist,0.) angle) in
+                             let topRight = translatePoint p2 (translateVect (step_dist,0.) angle) in
+                             let topLeft = translatePoint p2 (translateVect (-.step_dist,0.) angle) 
                              in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0; 
                                 segBottom = Some (new_segmentPointSimple bottomLeft bottomRight);
                                 segLeft = Some (new_segmentPointSimple bottomLeft topLeft);
@@ -75,9 +83,8 @@ let drawSegment s =
 let drawCollisionZone s =
   if s.segBottom = None then () 
   else let getSome = fromSome s in
-  let (bottomRight,bottomLeft,topRight,topLeft) = ( (getSome s.segBottom).pdest, (getSome s.segBottom).porig, (getSome s.segTop).pdest, (getSome s.segTop).porig)
-  in let zone = [|bottomRight.x,bottomRight.y ; topRight.x , topRight.y ; topLeft.x, topLeft.y ; bottomLeft.x, bottomLeft.y|]
-  in Graphics.draw_poly zone
+  let segs = [getSome s.segBottom; getSome s.segLeft; getSome s.segRight; getSome s.segTop]
+  in List.iter drawSegment segs
 
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
 
