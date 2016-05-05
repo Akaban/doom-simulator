@@ -1,6 +1,7 @@
 open Options
 open Physic
 open Point
+open Segment
 
 type t = {
   mutable pos : Point.t;
@@ -30,8 +31,12 @@ let move d p bsp =
             in let new_pos = new_point (p.pos.x + dx) (p.pos.y + dy)
             in begin match (detect_collision new_pos bsp) with
                 | Some s -> if !debug then begin
+                          let (Some segt) = s.segTop in
                           print_string ("Collision detecte avec " ^ Segment.toString s ^ "\n"); 
-                          flush stdout end
+                          flush stdout ; Printf.printf "Votre position par rapport au segTop est %s et par rapport au seg est %s" 
+                          (Segment.get_position_s new_pos segt) (Segment.get_position_s new_pos s);
+                          flush stdout
+                          end
                 | None -> p.oldpos <- p.pos ; p.pos <- new_pos
             end
           

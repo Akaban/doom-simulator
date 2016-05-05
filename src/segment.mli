@@ -12,6 +12,8 @@ type t = {
 
 type tpos = L | R | C
 
+val tposToString : tpos -> string
+
 val toString : t -> string
 
 val new_segment : int -> int -> int -> int -> t
@@ -25,6 +27,8 @@ val drawSegment : t -> unit
 val drawCollisionZone : t -> unit
 
 val get_position : Point.t -> t -> tpos
+
+val get_position_s : Point.t -> t -> string
 
 val split_segment : t -> t -> t option * t option
 

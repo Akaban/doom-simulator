@@ -22,6 +22,11 @@ let fromSome default = function
 
 type tpos = L | R | C
 
+let tposToString = function
+  | L -> "Left"
+  | R -> "Right"
+  | C -> "Center"
+
 let tangle s = (*tangente de l'angle du segment*)
   let a = float_of_int (s.pdest.y - s.porig.y)
   in let b = float_of_int (s.pdest.x - s.porig.y)
@@ -51,7 +56,6 @@ let translatePoint p vectPoint = new_point (p.x + vectPoint.x) (p.y + vectPoint.
 
 let sgn x = if x < 0 then -1 else 1
 
-(*angles un peu sale, essayer de proprifier tout ça*)
 let new_segmentPoint p1 p2 = let idc = idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
                              let angle = 180 - angle1 mod 90 in
@@ -92,11 +96,12 @@ let originVector s = (s.pdest.x - s.porig.x,s.pdest.y - s.porig.y)
 let get_position p s =
      let z = get_z p s
      in if z > 0 then L
-     else if z=0 then C
      else R;;
 
+let get_position_s p s =
+  let pos = get_position p s in
+  tposToString pos
 
-(*les deux fonction suivantes sont à vérifier, en particulier pour l'intersection*)
 let coordInterception d s =
     let (osx,osy) = originVector s
     in let (odx,ody) = originVector d
