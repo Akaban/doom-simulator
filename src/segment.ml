@@ -11,10 +11,6 @@ type t = { id : int ;
           segLeft : t option
          }
 
-let bottomRight s = match s.segBottom with
-  | Some s -> s.pdest
-  | None -> raise Not_found
-
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
 let idCount = compteur 0;;
 
@@ -48,8 +44,7 @@ let toString s = Printf.sprintf "{id=%d;porig=%s;pdest=%s;ci=%f;ce=%f;angle=%d}"
 let to_f = float_of_int
 let to_i = int_of_float
 
-let new_segmentPointSimple p1 p2 = (*création d'un segment sans le rectangle*)
-  let idc = idCount () in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
+let new_segmentPointSimple p1 p2 = { id=(-1) ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
                             ; segRight = None ; segTop = None ; segLeft = None}
 
 let translateVect (dx,dy) alpha = new_point (to_i (dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha)) 
@@ -80,6 +75,14 @@ let real_coord s =
   in let (xo,yo) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ci, float_of_int s.porig.y +. (float_of_int ly) *. s.ci)
   in let (xd,yd) = ( float_of_int s.porig.x +. (float_of_int lx) *. s.ce, float_of_int s.porig.y +. (float_of_int ly) *. s.ce)
   in (xo,yo),(xd,yd)
+
+let real_coordInt s =
+  let (xo,yo),(xd,yd) = real_coord s in
+  (truncate xo,truncate yo),(truncate xd,truncate yd)
+
+let bottomRight s = match s.segRight with
+  | Some s -> let (x,y),_ = real_coord s in new_point (truncate x) (truncate y)
+  | None -> raise Not_found
 
 let drawSegment s =
   let (xo,yo),(xd,yd) = real_coord s in
@@ -125,13 +128,24 @@ let split_segment d s =
                 | L -> (Some s,None)
                 | _ -> (None,Some s)
               end
-    | Some p -> let s1 = {s with ce = p;
+    | Some p -> if p=0. then begin
+                match (get_position s.pdest d) with
+                  | L -> (Some s,None)
+                  | _ -> (None,Some s)
+                  end else
+                let s1 = {s with ce = p;
                                 id = idCount ()}
                 in let s2 = {s with ci=p;
                                 id = idCount ()}
+                in let (s1xo,s1yo),(s1xd,s1yd) = real_coordInt s1 in
+                let (s2xo,s2yo),(s2xd,s2yd) = real_coordInt s2 in
+                let ts1 = new_segment s1xo s1yo s1xd s1yd
+                in let ts2 = new_segment s2xo s2yo s2xd s2yd
+                in let (rs1,rs2) = { ts1 with ce=p ; id=ts1.id ; porig=s1.porig ; pdest = s1.pdest}, { ts2 with ci=p ; id=ts2.id ;
+                   porig=s2.porig; pdest=s2.pdest}
                 in begin match (get_position s.porig d) with
-                         | L -> (Some s1,Some s2)
-                         | _ -> (Some s2,Some s1)
+                         | L -> (Some rs1,Some rs2)
+                         | _ -> (Some rs2,Some rs1)
                    end;;
     
 let split hd r =
@@ -142,7 +156,7 @@ let split hd r =
              | (Some s,None) -> split_do ts (s::l,r)
              | (None,Some s) -> split_do ts (l,s::r)
              | (Some s1,Some s2) -> split_do ts (s1::l,s2::r)
-             | _ -> assert false
+             | (None,None) -> assert false
              end
       | [] -> (l,r)
    in split_do r ([],[]);;
