@@ -33,7 +33,7 @@ let move d p bsp =
                 | Some s -> if !debug then begin
                           let (Some segt) = s.segTop in
                           print_string ("Collision detecte avec " ^ Segment.toString s ^ "\n"); 
-                          flush stdout ; Printf.printf "Votre position par rapport au segTop est %s et par rapport au seg est %s" 
+                          flush stdout ; Printf.printf "Votre position par rapport au segTop est %s et par rapport au seg est %s\n" 
                           (Segment.get_position_s new_pos segt) (Segment.get_position_s new_pos s);
                           flush stdout
                           end

@@ -19,7 +19,7 @@ let drawCollisionZone s =
 let printSegId s =
   if s.segBottom = None then ()
   else let p = bottomRight s in
-  let decal = if s.porig.x >= s.pdest.x then -10 else 10 in
+  let decal = if s.porig.x >= s.pdest.x then -30 else 30 in
   let cx, cy = current_x (), current_y () in
   moveto (p.x+decal) p.y ;
   draw_string (string_of_int s.id);
@@ -58,7 +58,7 @@ let debugKeys k player bsp =
     match k with
       | 'c' -> printf "Affichage des  zones de collisions des segments\n"; flush stdout;
                set_color red ; Bsp.iter drawCollisionZone bsp ; set_color black
-      | 'v' -> printf "Affiche des id de segment\n" ; flush stdout;
+      | 'v' -> printf "Affiche des id de segment\n" ; flush stdout; set_text_size 20;
                set_color blue ; Bsp.iter printSegId bsp ; set_color black 
       | 'g' -> printf "Affichage de tout les segments dispo\n";flush stdout ;
                Bsp.iter (fun s -> printf "%s\n" (toString s) ; flush stdout) bsp
@@ -80,9 +80,9 @@ let debugKeys k player bsp =
                                          end ; flush stdout
       | 't' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
                else let seg = hardFromSome !followSeg in let (pTop,pRight,pBot,pLeft) =  (Physic.collisionPlayer player.pos seg) in 
-               if pTop = R && pRight = L && pBot = L && pLeft = R then printf "Il y a une collision avec le segment suivi" 
-              else printf "Il n'y a pas de collision avec le segment suivi\n" ; flush stdout;
-               printf "segTop=%s segRight=%s segBot=%s segLeft=%s" (tposToString pTop) (tposToString pRight)
+               if pTop = L && pRight = R && pBot = R && pLeft = L then printf "Il y a une collision avec le segment suivi\n" 
+               else printf "Il n'y a pas de collision avec le segment suivi\n" ; flush stdout;
+               printf "segTop=%s segRight=%s segBot=%s segLeft=%s\n" (tposToString pTop) (tposToString pRight)
                                (tposToString pBot) (tposToString pLeft) ; flush stdout
       | 'o' -> Options.collision := not !Options.collision ; if !Options.collision then printf "Collision enabled\n" else printf "collision disabled\n" ; flush stdout 
       | _ -> () ;;
