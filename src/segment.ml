@@ -68,6 +68,7 @@ let new_segmentPoint p1 p2 = let idc = idCount () in
                                 segRight = Some (new_segmentPointSimple bottomRight topRight) }
 
 let new_segment xo yo xd yd = new_segmentPoint (new_point xo yo) (new_point xd yd) 
+let new_segmentSimple xo yo xd yd = new_segmentPointSimple (new_point xo yo) (new_point xd yd)
 
 let real_coord s =
   let lx = s.pdest.x - s.porig.x

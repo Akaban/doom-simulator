@@ -3,6 +3,7 @@ open Segment
 open Trigo
 open Player
 open Point
+open Options
 
 
 let display bsp p =
@@ -18,17 +19,26 @@ let display bsp p =
       let rotated = rotateSegment s in
           let rs = ref rotated in
           if  !rs.porig.x < 1 && !rs.pdest.x < 1 then ()
-          else begin if !rs.porig.x < 1 then rs := new_segment 1 
+          else if !rs.porig.x < 1 then rs := new_segment 1 
           (truncate (float_of_int (!rs.porig.y) +. float_of_int (1 - !rs.porig.x) *. (tangle !rs)))
           !rs.pdest.x !rs.pdest.y
-          else if !rs.pdest.x < 1 then rs := new_segment !rs.porig.x !rs.porig.y 1 
+          else if !rs.pdest.x < 1 then rs := new_segmentSimple !rs.porig.x !rs.porig.y 1 
             (truncate (float_of_int (!rs.pdest.y) +. (float_of_int (1 - !rs.pdest.x)) *. (tangle !rs)))
-          ; if !rs.porig.x > Options.max_dist then rs := new_segment Options.max_dist !rs.porig.y !rs.pdest.x !rs.pdest.y ;
-          if !rs.pdest.x > Options.max_dist then rs:= new_segment !rs.porig.x !rs.porig.y Options.max_dist !rs.pdest.y ;
-          drawSegment !rs
-          end
-    in match Options.mode with
-        | Options.TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y Options.size2d ;
-          set_color blue ; fill_circle p.pos.x p.pos.y Options.size2d ; set_color black
-        | Options.ThreeD -> failwith "TODO 3D"
+          ; if !rs.porig.x > max_dist then rs := new_segmentSimple max_dist !rs.porig.y !rs.pdest.x !rs.pdest.y ;
+          if !rs.pdest.x > max_dist then rs:= new_segmentSimple !rs.porig.x !rs.porig.y max_dist !rs.pdest.y ;
+          let d_focale = (float_of_int win_w /. 2.) /. (dtan (fov /2)) in
+          let (xo,yo),(xd,yd) = Segment.real_coord !rs in
+          let lsDiv = float_of_int win_w /. 2. in
+          let nyo,nyd = lsDiv -. yo *. d_focale /. xo, lsDiv -. yd *. d_focale /. xd  in
+          if nyo <= 0. && nyd <= 0. then ()
+          else rs := new_segmentSimple (truncate d_focale) (truncate nyo) (truncate d_focale) (truncate nyd) ;
+          let hsDiv = float_of_int win_h /. 2. in
+          let zc x = hsDiv +. float_of_int (ceiling_h - wall_h) *. d_focale /. x
+          in let zf x = hsDiv +. float_of_int (floor_h - wall_h) *. d_focale /. x
+          in let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd 
+          in () (*terminer la fonction parse3D*)
+    in match mode with
+        | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
+          set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
+        | ThreeD -> failwith "TODO 3D"
 

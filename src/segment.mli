@@ -19,6 +19,7 @@ val tposToString : tpos -> string
 val toString : t -> string
 
 val new_segment : int -> int -> int -> int -> t
+val new_segmentSimple : int -> int -> int -> int -> t
 
 val fromSome : 'a -> 'a option -> 'a
 
