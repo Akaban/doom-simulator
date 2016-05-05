@@ -37,3 +37,4 @@ val split_segment : t -> t -> t option * t option
 val split : t -> t list -> t list * t list
 
 val angle : t -> float
+val tangle : t -> float

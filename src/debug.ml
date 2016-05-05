@@ -19,7 +19,7 @@ let drawCollisionZone s =
 let printSegId s =
   if s.segBottom = None then ()
   else let p = bottomRight s in
-  let decal = if s.porig.x >= s.pdest.x then -30 else 30 in
+  let decal = if s.porig.x >= s.pdest.x then -10 else 10 in
   let cx, cy = current_x (), current_y () in
   moveto (p.x+decal) p.y ;
   draw_string (string_of_int s.id);

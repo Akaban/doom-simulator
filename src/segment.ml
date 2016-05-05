@@ -56,7 +56,7 @@ let sgn x = if x < 0 then -1 else 1
 let new_segmentPoint p1 p2 = let idc = idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
                              let angle = 180 - angle1 mod 90 in
-                             let step_dist = Options.step_dist in
+                             let step_dist = Options.step_dist /. 2. in
                              let bottomRight = translatePoint p1 (translateVect (step_dist,0.) angle)
                              in let bottomLeft = translatePoint p1 (translateVect (step_dist,0.) (angle+180)) in
                              let topRight = translatePoint p2 (translateVect (step_dist,0.) angle) in
@@ -114,9 +114,7 @@ let coordInterception d s =
     else let cd = (d.pdest.x - d.porig.x) * (s.pdest.y - s.porig.y) - (d.pdest.y - 
                  d.porig.y) * (s.pdest.x - s.porig.x)
          in if cd=0 then None else
-         let cr = float_of_int ((d.porig.y - s.porig.y) * (s.pdest.x - s.porig.x) - (d.porig.x -
-                         s.porig.x) * (s.pdest.y - s.porig.y)) /. (float_of_int cd)
-         in let cs = float_of_int ((d.porig.y - s.porig.y) * (d.pdest.x - d.porig.x) - (d.porig.x
+         let cs = float_of_int ((d.porig.y - s.porig.y) * (d.pdest.x - d.porig.x) - (d.porig.x
                       - s.porig.x) * (d.pdest.y - d.porig.y)) /. (float_of_int cd)
          in if cs >= s.ce || cs < s.ci then None
                else Some cs;; 
