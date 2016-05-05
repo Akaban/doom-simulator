@@ -11,7 +11,9 @@ type t = { id : int ;
           segLeft : t option
          }
 
-
+let bottomRight s = match s.segBottom with
+  | Some s -> s.pdest
+  | None -> raise Not_found
 
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
 let idCount = compteur 0;;

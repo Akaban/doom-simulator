@@ -83,6 +83,8 @@ let wall_collision_size = !step_dist / 2
 
 let fov = !fov
 
+let collision = ref true
+
 let step_dist = float !step_dist
 
 let scale = !scale

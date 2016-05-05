@@ -31,3 +31,5 @@ val minimap : bool
  
 val debug : bool ref
 val debug_bsp : bool
+
+val collision : bool ref

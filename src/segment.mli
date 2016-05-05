@@ -10,6 +10,8 @@ type t = {
   segLeft : t option
 }
 
+val bottomRight : t -> Point.t
+
 type tpos = L | R | C
 
 val tposToString : tpos -> string
