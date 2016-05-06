@@ -48,9 +48,8 @@ let move d p bsp =
                   | MRight -> step_dist, 0.
                in let new_pos = new_point (int_of_float ((float_of_int p.pos.x +. dx) *. Trigo.dcos p.pa)) 
                                 (int_of_float ((float_of_int p.pos.y +. dy) *. Trigo.dsin p.pa))
-               in if false then begin
-                 Printf.printf "did not detect a collision: player move from";
-                 p.pos <- new_pos end
-                 else Printf.printf "collision detected. do not move."
+               in match (detect_collision new_pos bsp) with
+                  | Some s -> ()
+                  | None -> p.pos <- new_pos
                  
               

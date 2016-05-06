@@ -54,7 +54,12 @@ let hardFromSome = function
   | Some s -> s
   | _ -> failwith "hardFromSome with None" 
 
-let debugKeys k player bsp =
+
+let debugKeys3D k player bsp =
+  match k with
+    | _ -> ()
+
+let debugKeys2D k player bsp =
     match k with
       | 'c' -> printf "Affichage des  zones de collisions des segments\n"; flush stdout;
                set_color red ; Bsp.iter drawCollisionZone bsp ; set_color black
@@ -87,3 +92,7 @@ let debugKeys k player bsp =
       | 'o' -> Options.collision := not !Options.collision ; if !Options.collision then printf "Collision enabled\n" else printf "collision disabled\n" ; flush stdout 
       | _ -> () ;;
                 
+
+let debugKeys k player bsp = match Options.mode with
+                             | Options.TwoD -> debugKeys2D k player bsp
+                             | Options.ThreeD -> debugKeys3D k player bsp
