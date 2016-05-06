@@ -56,7 +56,7 @@ let sgn x = if x < 0 then -1 else 1
 let new_segmentPoint p1 p2 = let idc = idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
                              let angle = 180 - angle1 mod 90 in
-                             let step_dist = Options.step_dist /. 2. in
+                             let step_dist = Options.step_dist in
                              let bottomRight = translatePoint p1 (translateVect (step_dist,0.) angle)
                              in let bottomLeft = translatePoint p1 (translateVect (step_dist,0.) (angle+180)) in
                              let topRight = translatePoint p2 (translateVect (step_dist,0.) angle) in
