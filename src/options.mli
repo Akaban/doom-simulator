@@ -13,6 +13,8 @@ val wall_h : int
 
 val fov : int
 
+val bg : Graphics.color
+
 val mouse_sensitivity : int
 
 val max_dist : int

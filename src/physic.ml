@@ -5,6 +5,9 @@ let hardFromSome = function
     | Some s -> s
     | None -> failwith "hardFromSome with None"
 
+(*Calcule les positions du joueur par rapport aux segments de la zone de collision
+ * utilisée pour le debug uniquement et ne prends pas en compte
+ * le sens du segment*)
 let collisionPlayer p s =
   let sTop, sRight, sBot, sLeft = 
         hardFromSome s.segTop, hardFromSome s.segRight,
@@ -13,11 +16,9 @@ let collisionPlayer p s =
                                     [sTop;sRight;sBot;sLeft]
   in (pTop,pRight,pBot,pLeft)
 
-
-
 let leftCollision = (R,L)
 let rightCollision = (L,R)
-(*La position des segments de colision est différente selon le sens de notre segment
+(*La position des segments de collision est différente selon le sens de notre segment
  * il convient donc de distinguer celui-ci *)
 
 
@@ -34,4 +35,4 @@ let detect_collision p bsp =
                       | _ -> if (get_position p (getSeg s.segLeft) = cdirL && get_position p (getSeg s.segRight) = cdirR && 
                                 get_position p (getSeg s.segBottom) = cdirR && 
                                 get_position p (getSeg s.segTop) = cdirL) then Some s else findcollision rt
-   in if !Options.collision then findcollision bsp else None
+  in if !Options.collision then findcollision bsp else None (*le mode debug permet d'enlever les collision [noclip]*)

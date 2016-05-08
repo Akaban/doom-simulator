@@ -29,10 +29,6 @@ val fromSome : 'a -> 'a option -> 'a
 val real_coord : t -> (float*float) * (float*float)
 val real_coordInt :t -> (int*int) * (int * int)
 
-val drawSegment : t -> unit
-
-val drawCollisionZone : t -> unit
-
 val get_position : Point.t -> t -> tpos
 
 val get_position_s : Point.t -> t -> string

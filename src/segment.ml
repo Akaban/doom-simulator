@@ -45,6 +45,7 @@ let angleWithPoint p1 p2 =
   in Trigo.datan (a/. b)
 
 
+(*Prends un segment et rends ce segment sous forme de string*)
 let toString s = Printf.sprintf "{id=%d;porig=%s;pdest=%s;ci=%f;ce=%f;angle=%d}" s.id (toString s.porig) (toString s.pdest) s.ci s.ce (truncate (angle s)) 
 
 let to_f = float_of_int
@@ -55,6 +56,10 @@ let new_segmentPointSimple p1 p2 = { id=(-1) ; porig=p1 ; pdest=p2 ; ci = 0.0 ; 
 
 let sgn x = if x < 0 then -1 else 1
 
+(*creation d'un segment selon deux points porig et pdest
+ * creation de la zone rectangulaire de collision autour de ce segment
+ * 4 segments définissant la zone de collision
+ * on définit également le sens du segment *)
 let new_segmentPoint p1 p2 = let idc = idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
                              let angle = 180 - angle1 mod 90 in
@@ -73,6 +78,8 @@ let new_segmentPoint p1 p2 = let idc = idCount () in
 let new_segment xo yo xd yd = new_segmentPoint (new_point xo yo) (new_point xd yd) 
 let new_segmentSimple xo yo xd yd = new_segmentPointSimple (new_point xo yo) (new_point xd yd)
 
+(* notre implémentation de segment utilise les pourcentage de début et de fin ci et ce
+ * cette fonction renvoie les coordonnées réelles de notre segment*)
 let real_coord s =
   let lx = s.pdest.x - s.porig.x
   in let ly = s.pdest.y - s.porig.y
@@ -84,20 +91,13 @@ let real_coordInt s =
   let (xo,yo),(xd,yd) = real_coord s in
   (truncate xo,truncate yo),(truncate xd,truncate yd)
 
+(* renvoie le point situé en bas à droite (en haut a gauche selon le sens )
+ * de la zone de collision *)
 let bottomRight s = match s.segRight with
   | Some s -> let (x,y),_ = real_coord s in new_point (truncate x) (truncate y)
   | None -> raise Not_found
 
-let drawSegment s =
-  let (xo,yo),(xd,yd) = real_coord s in
-  Graphics.draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
-
-let drawCollisionZone s =
-  if s.segBottom = None then () 
-  else let getSome = fromSome s in
-  let segs = [getSome s.segBottom; getSome s.segLeft; getSome s.segRight; getSome s.segTop]
-  in List.iter drawSegment segs
-
+(*coefficient z du sujet pour un point et un segment*)
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
 
 let get_position p s =
@@ -109,6 +109,8 @@ let get_position_s p s =
   let pos = get_position p s in
   tposToString pos
 
+(*Prends une droite et un segment et renvoie les coordonnées d'interception de ces derniers
+ * sinon renvoie None*)
 let coordInterception d s =
     let (osx,osy) = originVector s
     in let (odx,ody) = originVector d
@@ -139,8 +141,8 @@ let split_segment d s =
                                 id = idCount ()}
                 in let (s1xo,s1yo),(s1xd,s1yd) = real_coordInt s1 in
                 let (s2xo,s2yo),(s2xd,s2yd) = real_coordInt s2 in
-                let ts1 = new_segment s1xo s1yo s1xd s1yd
-                in let ts2 = new_segment s2xo s2yo s2xd s2yd
+                let ts1 = new_segment s1xo s1yo s1xd s1yd (*on utilise new_segment pour calculer les deux nouvelles zones*)
+                in let ts2 = new_segment s2xo s2yo s2xd s2yd (*de collision que l'on obtient*)
                 in let (rs1,rs2) = { ts1 with ce=p ; id=ts1.id ; porig=s1.porig ; pdest = s1.pdest}, { ts2 with ci=p ; id=ts2.id ;
                    porig=s2.porig; pdest=s2.pdest}
                 in begin match (get_position s.porig d) with

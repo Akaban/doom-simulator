@@ -4,8 +4,22 @@ open Trigo
 open Player
 open Point
 open Options
+open Colors
 
 exception NePasTraiter
+
+let fill_background color =
+  set_color Options.bg;
+  fill_rect 0 0 win_w win_h;
+  revert_color ()
+
+let drawSegment s =
+  let (xo,yo),(xd,yd) = real_coordInt s in
+  Graphics.draw_segments [|xo,yo,xd,yd|]
+
+let drawSegmentScale scale s = drawSegment {s with porig={s.porig with x=s.porig.x/scale ; y=s.porig.y/scale};
+                                                   pdest={s.pdest with x=s.pdest.x/scale ; y=s.pdest.y/scale}}
+
 
 let rotateSegment rs p =
   let s = !rs in 
@@ -40,7 +54,9 @@ let projectionSegment rs =
      [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|] 
 
 let display bsp p =
-  let parseFunction2d = drawSegment in 
+  let parseFunction2d = drawSegment in
+  let parseMiniMap = drawSegmentScale Options.scale in
+  let not_zero x = if x <= 1 then 1 else x in
   let parseFunction3d s = 
     let segment = ref s in
     try
@@ -53,5 +69,7 @@ let display bsp p =
       in match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD -> clear_graph () ; Bsp.parse parseFunction3d bsp (p.pos)
+        | ThreeD -> clear_graph () ; fill_background Options.bg ; Bsp.parse parseFunction3d bsp (p.pos) ; 
+                    set_color white ; Bsp.parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
+                    fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; revert_color ()
 

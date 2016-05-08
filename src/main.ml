@@ -2,6 +2,7 @@ open Options
 open Graphics
 open Player
 open Point
+open Colors
 
 let keyToDir = function
   | 'z' -> Some MFwd
@@ -15,6 +16,7 @@ let actions k player bsp = match k with
   | 'e' -> rotate Left player
   | 'a' -> rotate Right player
   | _ -> Debug.debugKeys k player bsp
+
 
 let () =
     let (px,py,pa),seglist = Parse_lab.read_lab cin
