@@ -53,10 +53,6 @@ let to_i = int_of_float
 let new_segmentPointSimple p1 p2 = { id=(-1) ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
                             ; segRight = None ; segTop = None ; segLeft = None; sens=C}
 
-let translateVect (dx,dy) alpha = new_point (to_i (dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha)) 
-                                               (to_i ( dx *. Trigo.dsin alpha +. dy *. Trigo.dcos alpha))
-let translatePoint p vectPoint = new_point (p.x + vectPoint.x) (p.y + vectPoint.y)
-
 let sgn x = if x < 0 then -1 else 1
 
 let new_segmentPoint p1 p2 = let idc = idCount () in

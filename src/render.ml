@@ -53,5 +53,5 @@ let display bsp p =
       in match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD -> Bsp.parse parseFunction3d bsp (p.pos)
+        | ThreeD -> clear_graph () ; Bsp.parse parseFunction3d bsp (p.pos)
 

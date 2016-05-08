@@ -42,12 +42,11 @@ let move d p bsp =
           
   | ThreeD -> let dx, dy =
                 match d with
-                  | MFwd -> 0. , step_dist
-                  | MBwd -> 0. , -.(step_dist)
-                  | MLeft -> -.(step_dist), 0.
-                  | MRight -> step_dist, 0.
-               in let new_pos = new_point (int_of_float ((float_of_int p.pos.x +. dx) *. Trigo.dcos p.pa)) 
-                                (int_of_float ((float_of_int p.pos.y +. dy) *. Trigo.dsin p.pa))
+                  | MLeft -> 0. , step_dist
+                  | MRight -> 0. , -.(step_dist)
+                  | MBwd -> -.(step_dist), 0.
+                  | MFwd -> step_dist, 0.
+               in let new_pos = translatePointWithAngle p.pos (dx,dy) p.pa
                in match (detect_collision new_pos bsp) with
                   | Some s -> ()
                   | None -> p.pos <- new_pos
