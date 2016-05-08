@@ -14,8 +14,8 @@ let new_player pos pa = { pos=pos;pa=pa;oldpos=pos}
 type dir = Left | Right
 
 let rotate d p = match d with
-  | Left -> p.pa <- p.pa - mouse_sensitivity mod 360
-  | Right -> p.pa <- p.pa + mouse_sensitivity mod 360
+  | Left -> p.pa <- p.pa + angular_change mod 360
+  | Right -> p.pa <- p.pa - angular_change mod 360
 
 type mv = MFwd | MBwd | MLeft | MRight
 

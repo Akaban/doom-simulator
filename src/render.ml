@@ -70,6 +70,8 @@ let display bsp p =
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
         | ThreeD -> clear_graph () ; fill_background Options.bg ; Bsp.parse parseFunction3d bsp (p.pos) ; 
+                    if Options.minimap then begin
                     set_color white ; Bsp.parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
                     fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; revert_color ()
+                    end
 

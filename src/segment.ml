@@ -26,6 +26,7 @@ let sens s =
   let (_,poy) = originVector s in 
   if poy >= 0 then R else L
 
+
 let tposToString = function
   | L -> "Left"
   | R -> "Right"
@@ -91,7 +92,11 @@ let real_coordInt s =
   let (xo,yo),(xd,yd) = real_coord s in
   (truncate xo,truncate yo),(truncate xd,truncate yd)
 
-(* renvoie le point situé en bas à droite (en haut a gauche selon le sens )
+let norme s = 
+  let (xo,yo),(xd,yd) = real_coord s in
+  truncate (sqrt ((xd -. xo) ** 2. +. (yd-.yo) ** 2.))
+
+ (* renvoie le point situé en bas à droite (en haut a gauche selon le sens )
  * de la zone de collision *)
 let bottomRight s = match s.segRight with
   | Some s -> let (x,y),_ = real_coord s in new_point (truncate x) (truncate y)

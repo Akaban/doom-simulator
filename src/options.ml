@@ -10,7 +10,8 @@ let size2d = ref 4
 let win_w = ref 800
 let win_h = ref 800
 
-let mouse_sensitivity = ref 5
+let mouse_sensitivity = ref 1
+let angularChange = ref 1
 
 let max_dist = ref 3000
 
@@ -66,6 +67,7 @@ let win_w = !win_w
 let win_h = !win_h
 
 let mouse_sensitivity = !mouse_sensitivity
+let angular_change = !angularChange
 
 let max_dist = !max_dist
 

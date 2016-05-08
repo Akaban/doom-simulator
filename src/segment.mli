@@ -24,10 +24,14 @@ val toString : t -> string
 val new_segment : int -> int -> int -> int -> t
 val new_segmentSimple : int -> int -> int -> int -> t
 
+val originVector : t -> (int*int)
+
 val fromSome : 'a -> 'a option -> 'a
 
 val real_coord : t -> (float*float) * (float*float)
 val real_coordInt :t -> (int*int) * (int * int)
+
+val norme : t -> int
 
 val get_position : Point.t -> t -> tpos
 
