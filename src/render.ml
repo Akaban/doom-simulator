@@ -35,9 +35,9 @@ let projectionSegment rs =
   let zc x = hsDiv + ((ceiling_h - wall_h) * d_focale) / x in
   let zf x = hsDiv + ((floor_h - wall_h) * d_focale) / x in
   let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd
-  in Format.eprintf "Les sommets de projection sont (%d, %d), (%d,%d), (%d,%d), (%d,%d)\n" nyo zco nyd zcd nyo zfo nyd zfd ;
+  in (*Format.eprintf "Les sommets de projection sont (%d, %d), (%d,%d), (%d,%d), (%d,%d)\n" nyo zco nyd zcd nyo zfo nyd zfd ;*)
      flush stdout;
-     [|nyo, zco; nyd, zcd; nyo, zfo; nyd, zfd|]
+     [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|] 
 
 let display bsp p =
   let parseFunction2d = drawSegment in 
