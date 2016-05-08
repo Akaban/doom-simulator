@@ -1,5 +1,7 @@
 open Point
 
+type tpos = L | R | C
+
 type t = { id : int ;
           porig : Point.t; 
           pdest : Point.t;
@@ -8,7 +10,8 @@ type t = { id : int ;
           segBottom : t option;
           segRight : t option;
           segTop : t option;
-          segLeft : t option
+          segLeft : t option;
+          sens : tpos
          }
 
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
@@ -18,7 +21,10 @@ let fromSome default = function
   | Some s -> s
   | _ -> default
 
-type tpos = L | R | C
+let originVector s = (s.pdest.x - s.porig.x,s.pdest.y - s.porig.y)
+let sens s = 
+  let (_,poy) = originVector s in 
+  if poy >= 0 then R else L
 
 let tposToString = function
   | L -> "Left"
@@ -45,7 +51,7 @@ let to_f = float_of_int
 let to_i = int_of_float
 
 let new_segmentPointSimple p1 p2 = { id=(-1) ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
-                            ; segRight = None ; segTop = None ; segLeft = None}
+                            ; segRight = None ; segTop = None ; segLeft = None; sens=C}
 
 let translateVect (dx,dy) alpha = new_point (to_i (dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha)) 
                                                (to_i ( dx *. Trigo.dsin alpha +. dy *. Trigo.dcos alpha))
@@ -61,11 +67,12 @@ let new_segmentPoint p1 p2 = let idc = idCount () in
                              in let bottomLeft = translatePoint p1 (translateVect (step_dist,0.) (angle+180)) in
                              let topRight = translatePoint p2 (translateVect (step_dist,0.) angle) in
                              let topLeft = translatePoint p2 (translateVect (step_dist,0.) (angle+180)) 
-                             in { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0; 
+                             in let s = { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0; 
                                 segBottom = Some (new_segmentPointSimple bottomLeft bottomRight);
                                 segLeft = Some (new_segmentPointSimple bottomLeft topLeft);
                                 segTop = Some (new_segmentPointSimple topLeft topRight);
-                                segRight = Some (new_segmentPointSimple bottomRight topRight) }
+                                segRight = Some (new_segmentPointSimple bottomRight topRight) ; sens=C }
+                             in { s with sens=sens s}
 
 let new_segment xo yo xd yd = new_segmentPoint (new_point xo yo) (new_point xd yd) 
 let new_segmentSimple xo yo xd yd = new_segmentPointSimple (new_point xo yo) (new_point xd yd)
@@ -96,8 +103,6 @@ let drawCollisionZone s =
   in List.iter drawSegment segs
 
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
-
-let originVector s = (s.pdest.x - s.porig.x,s.pdest.y - s.porig.y)
 
 let get_position p s =
      let z = get_z p s

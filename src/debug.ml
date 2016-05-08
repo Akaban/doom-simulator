@@ -23,6 +23,8 @@ let printSegId s =
   let cx, cy = current_x (), current_y () in
   moveto (p.x+decal) p.y ;
   draw_string (string_of_int s.id);
+  moveto (p.x+2*decal) p.y ;
+  draw_string (tposToString s.sens);
   moveto cx cy
 
 let getHead = function

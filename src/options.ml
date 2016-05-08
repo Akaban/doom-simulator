@@ -10,7 +10,7 @@ let size2d = ref 4
 let win_w = ref 800
 let win_h = ref 800
 
-let mouse_sensitivity = ref 10
+let mouse_sensitivity = ref 5
 
 let max_dist = ref 1000
 

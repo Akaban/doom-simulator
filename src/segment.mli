@@ -1,3 +1,5 @@
+type tpos = L | R | C
+
 type t = {
   id : int;
   porig : Point.t; 
@@ -7,12 +9,13 @@ type t = {
   segBottom: t option;
   segRight : t option;
   segTop : t option;
-  segLeft : t option
+  segLeft : t option;
+  sens : tpos
 }
 
 val bottomRight : t -> Point.t
 
-type tpos = L | R | C
+
 
 val tposToString : tpos -> string
 
@@ -24,6 +27,7 @@ val new_segmentSimple : int -> int -> int -> int -> t
 val fromSome : 'a -> 'a option -> 'a
 
 val real_coord : t -> (float*float) * (float*float)
+val real_coordInt :t -> (int*int) * (int * int)
 
 val drawSegment : t -> unit
 

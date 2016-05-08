@@ -12,9 +12,9 @@ let keyToDir = function
 
 
 let actions k player bsp = match k with
-  | 'l' -> rotate Right player
-  | 'k' -> rotate Left player
-  | _ -> ()
+  | 'e' -> rotate Left player
+  | 'a' -> rotate Right player
+  | _ -> Debug.debugKeys k player bsp
 
 let () =
     let (px,py,pa),seglist = Parse_lab.read_lab cin
@@ -30,7 +30,7 @@ let () =
                  match keyToDir ev.key with
                   | Some m -> move m player bsp 
                   | _ -> actions ev.key player bsp (*Debug.debugKeys ev.key player bsp*) end;
-               synchronize ();
                Render.display bsp player;
+               synchronize ();
            done;
        with Exit -> close_graph () ; exit 0;;
