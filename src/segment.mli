@@ -23,8 +23,12 @@ val toString : t -> string
 
 val new_segment : int -> int -> int -> int -> t
 val new_segmentSimple : int -> int -> int -> int -> t
+val new_segmentPoint : Point.t -> Point.t -> t
+val new_segmentPointSimple : Point.t -> Point.t -> t
 
 val originVector : t -> (int*int)
+
+val rotateSegmentOrig : t -> int -> t
 
 val fromSome : 'a -> 'a option -> 'a
 

@@ -48,10 +48,14 @@ let projectionSegment rs =
   else let hsDiv = win_h / 2 in
   let zc x = hsDiv + ((ceiling_h - wall_h) * d_focale) / x in
   let zf x = hsDiv + ((floor_h - wall_h) * d_focale) / x in
-  let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd
-  in (*Format.eprintf "Les sommets de projection sont (%d, %d), (%d,%d), (%d,%d), (%d,%d)\n" nyo zco nyd zcd nyo zfo nyd zfd ;*)
-     flush stdout;
-     [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|] 
+  let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd in
+  nyo, zco, zfo, nyd, zcd, zfd
+  
+           
+
+
+
+
 
 let display bsp p =
   let parseFunction2d = drawSegment in
@@ -61,17 +65,23 @@ let display bsp p =
     let segment = ref s in
     try
       let () = rotateSegment segment p ; clipSegment segment p in
-      let vertices = projectionSegment segment in
-      (*draw_segments [|nyo, zco, nyo, zfo|];
-           draw_segments [|nyd, zcd, nyd, zfd|];*)
-      fill_poly vertices
+      let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment segment in
+      fill_poly [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|];
+      set_color black ;
+      draw_segments [|nyo, zco, nyo, zfo|];
+      draw_segments [|nyd, zfd, nyd, zcd|];
+      revert_color () 
     with NePasTraiter -> ()
       in match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD -> clear_graph () ; fill_background Options.bg ; Bsp.parse parseFunction3d bsp (p.pos) ; 
+        | ThreeD -> fill_background Options.bg ; set_color coral ; 
+                    (*fill_rect 0 (win_h/2) win_w (win_h/2) ;*) revert_color (); set_color blue ;
+                    Bsp.rev_parse parseFunction3d bsp (p.pos) ; revert_color ();
                     if Options.minimap then begin
                     set_color white ; Bsp.parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
-                    fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; revert_color ()
+                    fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; 
+                    drawSegment p.lAngleMinimap ; drawSegment p.rAngleMinimap;
+                    revert_color ()
                     end
 

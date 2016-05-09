@@ -64,17 +64,19 @@ let sgn x = if x < 0 then -1 else 1
 let new_segmentPoint p1 p2 = let idc = idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
                              let angle = 180 - angle1 mod 90 in
-                             let step_dist = Options.step_dist in
-                             let bottomRight = translatePoint p1 (translateVect (step_dist,0.) angle)
-                             in let bottomLeft = translatePoint p1 (translateVect (step_dist,0.) (angle+180)) in
-                             let topRight = translatePoint p2 (translateVect (step_dist,0.) angle) in
-                             let topLeft = translatePoint p2 (translateVect (step_dist,0.) (angle+180)) 
+                             let sizeCol = (Options.wall_collision_size,0.) in
+                             let bottomRight = translatePoint p1 (translateVect sizeCol angle)
+                             in let bottomLeft = translatePoint p1 (translateVect sizeCol (angle+180)) in
+                             let topRight = translatePoint p2 (translateVect sizeCol angle) in
+                             let topLeft = translatePoint p2 (translateVect sizeCol (angle+180)) 
                              in let s = { id=idc ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0; 
                                 segBottom = Some (new_segmentPointSimple bottomLeft bottomRight);
                                 segLeft = Some (new_segmentPointSimple bottomLeft topLeft);
                                 segTop = Some (new_segmentPointSimple topLeft topRight);
                                 segRight = Some (new_segmentPointSimple bottomRight topRight) ; sens=C }
                              in { s with sens=sens s}
+
+let rotateSegmentOrig s angle = {s with pdest=translatePointWithAngle s.pdest (0.,0.) angle}
 
 let new_segment xo yo xd yd = new_segmentPoint (new_point xo yo) (new_point xd yd) 
 let new_segmentSimple xo yo xd yd = new_segmentPointSimple (new_point xo yo) (new_point xd yd)

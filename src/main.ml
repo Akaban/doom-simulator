@@ -46,6 +46,7 @@ let () =
                 | Some Right -> rotate Right player
                 | Some Left  -> rotate Left player 
                 | None -> () end;
+               clear_graph ();
                Render.display bsp player;
                synchronize ();
          done;

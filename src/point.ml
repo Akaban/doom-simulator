@@ -2,6 +2,8 @@ type t = {x : int; y : int}
 
 let new_point x y = {x=x;y=y}
 
+let divPoint p scale = new_point (p.x / scale) (p.y / scale)
+
 let toString p = "(x=" ^ string_of_int p.x ^ ",y=" ^ string_of_int p.y ^ ")"
 
 let translateVect (dx,dy) alpha = new_point (truncate (dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha)) 

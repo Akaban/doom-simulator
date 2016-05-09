@@ -1,7 +1,10 @@
 type t = {
   mutable pos : Point.t;
   mutable pa : int;
-  mutable oldpos : Point.t
+  mutable oldpos : Point.t;
+  mutable rAngleMinimap : Segment.t;
+  mutable lAngleMinimap : Segment.t
+
 }
 
 val new_player : Point.t -> int -> t
