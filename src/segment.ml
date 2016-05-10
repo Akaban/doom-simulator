@@ -92,6 +92,9 @@ let new_segmentSimpleFloat xo yo xd yd =
   let ci, ce = (yo -. fyo) /. ly, (yd -. fyo) /. ly in
   let seg = new_segmentSimple (truncate fxo) (truncate fyo) (truncate fxd) (truncate fyd) in
   { seg with ce=ce; ci=ci}
+let new_segmentSimpleFloatWithid xo yo xd yd id =
+  let seg = new_segmentSimpleFloat xo yo xd yd in
+  { seg with id=id }
 
 (* notre implémentation de segment utilise les pourcentage de début et de fin ci et ce
  * cette fonction renvoie les coordonnées réelles de notre segment*)

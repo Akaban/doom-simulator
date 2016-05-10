@@ -5,6 +5,7 @@ open Printf
 open Player
 open Bsp
 
+exception NotAnAction
 
 let drawSegment s =
   let (xo,yo),(xd,yd) = real_coord s in
@@ -54,6 +55,14 @@ let hardFromSome = function
   | Some s -> s
   | _ -> failwith "hardFromSome with None" 
 
+let pauseGame pauseKey =
+  printf "Jeu en pause, appuyer sur %c pour reprendre la partie" pauseKey ;
+  flush stdout;
+  let key = ref None in
+  while !key <> Some pauseKey do
+    let ev = wait_next_event [Key_pressed] in
+    if ev.keypressed then key := Some ev.key;
+  done ; ()
 
 let debugKeys3D k player bsp =
   let parseF = Render.parseFunction3d player true true in
@@ -67,10 +76,9 @@ let debugKeys3D k player bsp =
              clear_graph()
     | 'n' -> printf "Afficher contour\n"; flush stdout;
              Options.draw_contour := (not !Options.draw_contour)
-    | 'm' -> Options.debug_manualRender := not !Options.debug_manualRender ; if !Options.debug_manualRender then 
-              printf "Option debug manual render activated\n" else printf "Option debu manual render disabled\n" ; flush stdout
- 
-    | _ -> ()
+    | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
+    | 'p' -> pauseGame 'p'
+    | _ -> raise NotAnAction
 
 let debugKeys2D k player bsp =
     match k with
@@ -115,3 +123,4 @@ let debugKeys2D k player bsp =
 let debugKeys k player bsp = match Options.mode with
                              | Options.TwoD -> debugKeys2D k player bsp
                              | Options.ThreeD -> debugKeys3D k player bsp
+                             | _ -> raise NotAnAction

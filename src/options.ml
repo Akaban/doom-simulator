@@ -1,4 +1,4 @@
-type tmode = TwoD | ThreeD
+type tmode = TwoD | ThreeD | TwoDdebug
 
 let usage = "usage: ./bsp file.lab"
 let file = ref ""
@@ -15,7 +15,7 @@ let angularChange = ref 1
 
 let max_dist = ref 3000
 
-let fov = ref 60
+let fov = ref 110
 
 let step_dist = ref 10
 
@@ -31,6 +31,7 @@ let debug_bsp = ref false
 let set_mode = function
   | "2D" -> mode := TwoD
   | "3D" -> mode := ThreeD
+  | "2DD" -> mode := TwoDdebug
   | _ -> raise (Arg.Bad "2D or 3D only")
 
 
@@ -76,6 +77,7 @@ let xmin = float !xmin
 let ceiling_h = win_h / 3
 let floor_h = 0
 let wall_h = ceiling_h - floor_h
+let eye_h = wall_h - (wall_h /3)
 
 let mode = !mode
 
@@ -91,9 +93,9 @@ let fov = !fov
 (* draw options *)
 let bg = Colors.grey
 let fill_color = Graphics.blue
-let contour_color = Graphics.white
+let contour_color = Graphics.black
 let draw_contour = ref true
-let fill_wall = ref true
+let fill_wall = ref false
 
 let collision = ref true
 

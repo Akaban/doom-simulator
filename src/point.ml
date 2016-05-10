@@ -8,6 +8,13 @@ let toString p = "(x=" ^ string_of_int p.x ^ ",y=" ^ string_of_int p.y ^ ")"
 
 let translateVect (dx,dy) alpha = new_point (truncate (dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha)) 
                                                (truncate ( dx *. Trigo.dsin alpha +. dy *. Trigo.dcos alpha))
+let translateVectFloat (dx,dy) alpha = dx *. Trigo.dcos alpha -. dy *. Trigo.dsin alpha ,
+                                       dx *. Trigo.dsin alpha +. dy *. Trigo.dcos alpha
+let translatePointFloatWithAngle (x,y) (dx,dy) alpha =
+  let (tVectx,tVecty) = translateVectFloat (dx,dy) alpha in
+  x +. tVectx, y +. tVecty
+
+
 let translatePoint p vectPoint = new_point (p.x + vectPoint.x) (p.y + vectPoint.y)
 
 let translatePointWithAngle p (dx,dy) alpha =

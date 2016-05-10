@@ -1,4 +1,4 @@
-type tmode = TwoD | ThreeD
+type tmode = TwoD | ThreeD | TwoDdebug
 
 val mode : tmode
 
@@ -10,6 +10,7 @@ val win_h : int
 val ceiling_h : int
 val floor_h : int
 val wall_h : int
+val eye_h : int
 
 val fov : int
 

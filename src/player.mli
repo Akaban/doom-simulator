@@ -9,6 +9,8 @@ type t = {
 
 val new_player : Point.t -> int -> t
 
+val calculateAngleMinimapS : Point.t -> int -> bool -> (Segment.t*Segment.t)
+
 type dir = Left | Right
 
 val rotate : dir -> t -> unit

@@ -26,6 +26,7 @@ val new_segmentSimple : int -> int -> int -> int -> t
 val new_segmentSimpleFloat : float -> float -> float -> float -> t
 val new_segmentPoint : Point.t -> Point.t -> t
 val new_segmentPointSimple : Point.t -> Point.t -> t
+val new_segmentSimpleFloatWithid : float -> float -> float -> float -> int -> t
 
 val originVector : t -> (int*int)
 

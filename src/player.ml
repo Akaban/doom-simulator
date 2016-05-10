@@ -11,12 +11,14 @@ type t = {
   mutable lAngleMinimap : Segment.t
 }
 
-let calculateAngleMinimap p pa =
+let calculateAngleMinimapS p pa bscale =
+let divPoint p scale = if bscale then divPoint p scale else p in
 let divPos = divPoint p scale in
   let rightAnglePos = translatePointWithAngle divPos (sizeAngleMiniMap,0.) (pa-angleMiniMap) in
   let leftAnglePos = translatePointWithAngle divPos (sizeAngleMiniMap,0.) (pa+angleMiniMap) in
   new_segmentPointSimple divPos rightAnglePos, new_segmentPointSimple divPos leftAnglePos
 
+let calculateAngleMinimap p pa = calculateAngleMinimapS p pa true
 
 let new_player pos pa =
   let rMinimap,lMinimap = calculateAngleMinimap pos pa in
@@ -59,7 +61,7 @@ let move d p bsp =
                           end
                 | None -> p.oldpos <- p.pos ; p.pos <- new_pos
             end
-          
+  | TwoDdebug        
   | ThreeD -> let dx, dy =
                 match d with
                   | MLeft -> 0. , step_dist
