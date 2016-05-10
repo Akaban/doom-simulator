@@ -22,34 +22,38 @@ let drawSegmentScale scale s = drawSegment {s with porig={s.porig with x=s.porig
 
 
 let rotateSegment rs p =
-  let s = !rs in 
-      let xo = float_of_int (s.porig.x - p.pos.x) *. dcos (-p.pa) -. float_of_int (s.porig.y - p.pos.y) *. dsin (-p.pa) in
-      let yo = float_of_int (s.porig.y - p.pos.y) *. dcos (-p.pa) +. float_of_int (s.porig.x - p.pos.x) *. dsin (-p.pa) in
-      let xd = float_of_int (s.pdest.x - p.pos.x) *. dcos (-p.pa) -. float_of_int (s.pdest.y - p.pos.y) *. dsin (-p.pa) in
-      let yd = float_of_int (s.pdest.y - p.pos.y) *. dcos (-p.pa) +. float_of_int (s.pdest.x - p.pos.x) *. dsin (-p.pa) in
-      rs := new_segmentSimple (truncate xo) (truncate yo) (truncate xd) (truncate yd) 
+  let (oxo,oyo),(oxd,oyd) = Segment.real_coord !rs in
+  let px, py = float_of_int p.pos.x, float_of_int p.pos.y in
+      let xo = (oxo -. px) *. dcos (-p.pa) -. (oyo -. py) *. dsin (-p.pa) in
+      let yo = (oyo -. py) *. dcos (-p.pa) +. (oxo -. px) *. dsin (-p.pa) in
+      let xd = (oxd -. px) *. dcos (-p.pa) -. (oyd -. py) *. dsin (-p.pa) in
+      let yd = (oyd -. py) *. dcos (-p.pa) +. (oxd -. px) *. dsin (-p.pa) in
+      rs := new_segmentSimpleFloat xo yo xd yd
 
-let clipSegment rs p = 
-  if  !rs.porig.x < 1 && !rs.pdest.x < 1 then raise NePasTraiter
-  else if !rs.porig.x < 1 then rs := new_segment 1 
-          (!rs.porig.y + (1 - !rs.porig.x) * truncate (tangle !rs))
-          !rs.pdest.x !rs.pdest.y
-  else if !rs.pdest.x < 1 then rs := new_segmentSimple !rs.porig.x !rs.porig.y 1 
-            (truncate (float_of_int (!rs.pdest.y) +. (float_of_int (1 - !rs.pdest.x)) *. (tangle !rs)));
-            if !rs.porig.x > max_dist then rs := new_segmentSimple max_dist !rs.porig.y !rs.pdest.x !rs.pdest.y ;
-          if !rs.pdest.x > max_dist then rs:= new_segmentSimple !rs.porig.x !rs.porig.y max_dist !rs.pdest.y
+let clipSegment rs p =
+  let (xo,yo),(xd,yd) = Segment.real_coord !rs in 
+  if  xo < 1. && xd < 1. then raise NePasTraiter
+  else if xo < 1. then rs := new_segmentSimpleFloat 1. 
+          (yo +. (1. -. xo) *. (tangle !rs))
+          xd yd
+  else if xd < 1. then rs := new_segmentSimpleFloat xo yo 1. 
+            (yd +. (1. -. xd) *. (tangle !rs));
+            if xo > max_dist then rs := new_segmentSimpleFloat max_dist yo xd yd ;
+          if xd > max_dist then rs:= new_segmentSimpleFloat xo yo max_dist yd
 
 (*Projette le segment sur l'écran et renvoie les sommets du polygone*)
 let projectionSegment rs =
-  let d_focale = truncate ((float_of_int win_w /. 2.) /. (dtan (fov /2))) in
-  let (xo,yo),(xd,yd) = Segment.real_coordInt !rs in
-  let nyo,nyd = (win_w / 2)  - (yo * d_focale / xo), (win_w / 2)  - (yd * d_focale / xd)  in
-  if nyo < 0 && nyd < 0 || nyo > win_w && nyd > win_w then raise NePasTraiter
-  else let hsDiv = win_h / 2 in
-  let zc x = hsDiv + ((ceiling_h - wall_h) * d_focale) / x in
-  let zf x = hsDiv + ((floor_h - wall_h) * d_focale) / x in
+  let d_focale = (float_of_int win_w /. 2.) /. (dtan (fov / 2)) in
+  let (xo,yo),(xd,yd) = Segment.real_coord !rs in
+  let win_w = float_of_int win_w in
+  let nyo,nyd = (win_w /. 2.)  -. ((yo *. d_focale) /. xo), (win_w /. 2.)  -. ((yd *. d_focale) /. xd)  in
+  if nyo < 0. && nyd < 0. || nyo > win_w && nyd > win_w then raise NePasTraiter
+  else let win_h = float_of_int win_h in 
+  let hsDiv = win_h /. 2. in
+  let zc x = hsDiv +. (float_of_int (ceiling_h - wall_h) *. d_focale) /. x in
+  let zf x = hsDiv +. (float_of_int (floor_h - wall_h) *. d_focale) /. x in
   let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd in
-  nyo, zco, zfo, nyd, zcd, zfd
+  truncate nyo, truncate zco, truncate zfo, truncate nyd, truncate zcd, truncate zfd
   
            
 let parseFunction3d p contour fill s = 
@@ -58,9 +62,11 @@ let parseFunction3d p contour fill s =
       let () = rotateSegment segment p ; clipSegment segment p in
       let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment segment in
       if fill then
+      set_color Options.fill_color ;
       fill_poly [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|];
+      revert_color () ;
       if contour then
-      set_color black ;
+      set_color Options.contour_color ;
       draw_segments [|nyo, zco, nyo, zfo|];
       draw_segments [|nyo, zfo, nyd, zfd|];
       draw_segments [|nyo, zco, nyd, zcd|];
@@ -79,8 +85,8 @@ let display bsp p =
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
         | ThreeD ->  clear_graph () ; fill_background Options.bg ; set_color coral ; 
-                    (*fill_rect 0 (win_h/2) win_w (win_h/2) ;*) revert_color (); set_color blue ;
-                    Bsp.parse (parseFunction3d p !Options.draw_contour !Options.fill_wall) bsp (p.pos) ; revert_color ();
+                    (*fill_rect 0 (win_h/2) win_w (win_h/2) ;*) revert_color (); 
+                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall) bsp (p.pos) ;
                     if Options.minimap then begin
                     set_color white ; Bsp.rev_parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
                     fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; 

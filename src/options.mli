@@ -14,13 +14,15 @@ val wall_h : int
 val fov : int
 
 val bg : Graphics.color
+val fill_color : Graphics.color
+val contour_color : Graphics.color
 val draw_contour : bool ref
 val fill_wall : bool ref
 
 val mouse_sensitivity : int
 val angular_change : int
 
-val max_dist : int
+val max_dist : float
 
 val step_dist : float
 

@@ -69,11 +69,11 @@ let win_h = !win_h
 let mouse_sensitivity = !mouse_sensitivity
 let angular_change = !angularChange
 
-let max_dist = !max_dist
+let max_dist = float !max_dist
 
 let xmin = float !xmin
 
-let ceiling_h = win_h / 4
+let ceiling_h = win_h / 3
 let floor_h = 0
 let wall_h = ceiling_h - floor_h
 
@@ -90,6 +90,8 @@ let fov = !fov
 
 (* draw options *)
 let bg = Colors.grey
+let fill_color = Graphics.blue
+let contour_color = Graphics.white
 let draw_contour = ref true
 let fill_wall = ref true
 

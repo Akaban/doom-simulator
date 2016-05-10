@@ -13,9 +13,9 @@ type t = {
   sens : tpos
 }
 
+val resetIdCount : unit -> unit
+
 val bottomRight : t -> Point.t
-
-
 
 val tposToString : tpos -> string
 
@@ -23,6 +23,7 @@ val toString : t -> string
 
 val new_segment : int -> int -> int -> int -> t
 val new_segmentSimple : int -> int -> int -> int -> t
+val new_segmentSimpleFloat : float -> float -> float -> float -> t
 val new_segmentPoint : Point.t -> Point.t -> t
 val new_segmentPointSimple : Point.t -> Point.t -> t
 

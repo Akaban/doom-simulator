@@ -24,12 +24,12 @@ let mouseDirection (x1,y1) (x2,y2) =
      if ovSx <= -mouse_sensitivity then Some Left
      else None
 
-
 let () =
   let (px,py,pa),seglist = Parse_lab.read_lab cin in
   let seglist2 = List.map (fun (xo,yo,xd,yd) -> Segment.new_segment xo yo xd yd) seglist in
   let bsp = Bsp.build_bsp seglist2 in
   let player = Player.new_player (Point.new_point px py) pa in
+  Bsp.instanceBsp := bsp ;
   open_graph (Printf.sprintf " %dx%d" win_w win_h); set_window_title "Doom-Like Project 0.1";
        auto_synchronize false; Render.display bsp player ; synchronize () ;
        try
@@ -39,15 +39,14 @@ let () =
            begin
            if ev.keypressed then
              match keyToDir ev.key with
-                  | Some m -> move m player bsp 
-                  | _ -> actions ev.key player bsp (*Debug.debugKeys ev.key player bsp*) 
+                  | Some m -> move m player !Bsp.instanceBsp 
+                  | _ -> actions ev.key player !Bsp.instanceBsp (*Debug.debugKeys ev.key player bsp*) 
   else let dirAngle = mouseDirection (mx, my) ((ev.mouse_x), (ev.mouse_y)) in
   match dirAngle with
                 | Some Right -> rotate Right player
                 | Some Left  -> rotate Left player 
                 | None -> () end;
-               clear_graph ();
-               Render.display bsp player;
+               Render.display !Bsp.instanceBsp player;
                synchronize ();
          done;
   with Exit -> close_graph () ; exit 0;;

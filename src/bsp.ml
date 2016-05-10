@@ -1,6 +1,15 @@
 open Segment
+open List
 
 type t = E | N of Segment.t * t * t 
+
+let getRight = function
+  | N(_,_,rt) -> rt
+  | E -> E
+
+let getLeft = function
+  | N(_,lt,_) -> lt
+  | E -> E
 
 let rec parse f bsp p = match bsp with
   | N(s,lt,rt) -> 
@@ -10,6 +19,10 @@ let rec parse f bsp p = match bsp with
          | _ -> parse f rt p ; f s ; parse f lt p
       end
   | E -> ()
+
+let rec toList = function
+  | N(s,lt,rt) -> rev_append (s :: toList lt) (toList rt)
+  | E -> []
 
 let rec parseLeft f bsp p = match bsp with
   | N(s,lt,rt) ->
@@ -61,5 +74,21 @@ let equilibrage l s r =
 
 
 let rec build_bsp sl = match sl with
-  | (t::ts) -> let (left,right) = Segment.split t ts in equilibrage (build_bsp left) t (build_bsp right)
-  | [] -> E 
+  | (t::ts) -> let (left,right) = Segment.split t ts in (*equilibrage (build_bsp left) t (build_bsp right)*) N(t,build_bsp left, build_bsp right)
+  | [] -> E
+
+let rec deleteElement e = function
+  | x::xs when e=x -> deleteElement e xs
+  | [] -> []
+  | x::xs -> x :: deleteElement e xs 
+
+let build_bspWithPivot s sl =
+  let slwos = deleteElement s sl in
+  build_bsp (s::slwos)
+
+(*une instance de bsp que l'on pourrait modifier pendant l'execution*)
+let instanceBsp = ref E
+
+let updateBsp b = instanceBsp := b
+
+    

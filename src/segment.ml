@@ -15,7 +15,9 @@ type t = { id : int ;
          }
 
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
-let idCount = compteur 0;;
+let idCount = ref (compteur 0);;
+
+let resetIdCount () = idCount := compteur 0
 
 let fromSome default = function
   | Some s -> s
@@ -61,7 +63,7 @@ let sgn x = if x < 0 then -1 else 1
  * creation de la zone rectangulaire de collision autour de ce segment
  * 4 segments définissant la zone de collision
  * on définit également le sens du segment *)
-let new_segmentPoint p1 p2 = let idc = idCount () in
+let new_segmentPoint p1 p2 = let idc = !idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
                              let angle = 180 - angle1 mod 90 in
                              let sizeCol = (Options.wall_collision_size,0.) in
@@ -76,10 +78,20 @@ let new_segmentPoint p1 p2 = let idc = idCount () in
                                 segRight = Some (new_segmentPointSimple bottomRight topRight) ; sens=C }
                              in { s with sens=sens s}
 
+
+
+
 let rotateSegmentOrig s angle = {s with pdest=translatePointWithAngle s.pdest (0.,0.) angle}
 
 let new_segment xo yo xd yd = new_segmentPoint (new_point xo yo) (new_point xd yd) 
 let new_segmentSimple xo yo xd yd = new_segmentPointSimple (new_point xo yo) (new_point xd yd)
+
+let new_segmentSimpleFloat xo yo xd yd =
+  let fxo, fyo, fxd, fyd = floor xo, floor yo, ceil xd, ceil yd in
+  let ly = fyd -. fyo in
+  let ci, ce = (yo -. fyo) /. ly, (yd -. fyo) /. ly in
+  let seg = new_segmentSimple (truncate fxo) (truncate fyo) (truncate fxd) (truncate fyd) in
+  { seg with ce=ce; ci=ci}
 
 (* notre implémentation de segment utilise les pourcentage de début et de fin ci et ce
  * cette fonction renvoie les coordonnées réelles de notre segment*)
@@ -144,9 +156,9 @@ let split_segment d s =
                   | _ -> (None,Some s)
                   end else
                 let s1 = {s with ce = p;
-                                id = idCount ()}
+                                id = !idCount ()}
                 in let s2 = {s with ci=p;
-                                id = idCount ()}
+                                id = !idCount ()}
                 in let (s1xo,s1yo),(s1xd,s1yd) = real_coordInt s1 in
                 let (s2xo,s2yo),(s2xd,s2yd) = real_coordInt s2 in
                 let ts1 = new_segment s1xo s1yo s1xd s1yd (*on utilise new_segment pour calculer les deux nouvelles zones*)

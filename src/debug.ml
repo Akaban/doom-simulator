@@ -23,8 +23,6 @@ let printSegId s =
   let cx, cy = current_x (), current_y () in
   moveto (p.x+decal) p.y ;
   draw_string (string_of_int s.id);
-  moveto (p.x+2*decal) p.y ;
-  draw_string (tposToString s.sens);
   moveto cx cy
 
 let getHead = function
@@ -105,6 +103,12 @@ let debugKeys2D k player bsp =
                printf "segTop=%s segRight=%s segBot=%s segLeft=%s\n" (tposToString pTop) (tposToString pRight)
                                (tposToString pBot) (tposToString pLeft) ; flush stdout
       | 'o' -> Options.collision := not !Options.collision ; if !Options.collision then printf "Collision enabled\n" else printf "collision disabled\n" ; flush stdout 
+      | 'x' -> printf "Affichage de tout les segments a gauche du pivot\n"; flush stdout ;
+               printf "Par rapport au pivot %s \n" (toString (getHead bsp)) ; flush stdout ;
+               Bsp.iter (fun s -> printf "%s\n" (toString s); flush stdout) (Bsp.getLeft bsp)
+      | 'l' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
+               else let seg = hardFromSome !followSeg in let newbsp = Bsp.build_bspWithPivot seg (toList bsp) in 
+               printf "Le BSP est update, le pivot est desormais %s\n" (toString seg) ; flush stdout ; Bsp.updateBsp newbsp ; clear_graph ()
       | _ -> () ;;
                 
 
