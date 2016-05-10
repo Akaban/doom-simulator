@@ -107,6 +107,7 @@ let bottomRight s = match s.segRight with
 (*coefficient z du sujet pour un point et un segment*)
 let get_z p s = (s.pdest.x - s.porig.x) * (p.y - s.porig.y) - (s.pdest.y - s.porig.y) * (p.x - s.porig.x) 
 
+(*par convention si un point est sur un segment on dira qu'il est a droite*)
 let get_position p s =
      let z = get_z p s
      in if z > 0 then L

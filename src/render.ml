@@ -52,7 +52,21 @@ let projectionSegment rs =
   nyo, zco, zfo, nyd, zcd, zfd
   
            
-
+let parseFunction3d p contour fill s = 
+    let segment = ref s in
+    try
+      let () = rotateSegment segment p ; clipSegment segment p in
+      let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment segment in
+      if fill then
+      fill_poly [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|];
+      if contour then
+      set_color black ;
+      draw_segments [|nyo, zco, nyo, zfo|];
+      draw_segments [|nyo, zfo, nyd, zfd|];
+      draw_segments [|nyo, zco, nyd, zcd|];
+      draw_segments [|nyd, zfd, nyd, zcd|];
+      revert_color () 
+    with NePasTraiter -> ()
 
 
 
@@ -61,27 +75,17 @@ let display bsp p =
   let parseFunction2d = drawSegment in
   let parseMiniMap = drawSegmentScale Options.scale in
   let not_zero x = if x <= 1 then 1 else x in
-  let parseFunction3d s = 
-    let segment = ref s in
-    try
-      let () = rotateSegment segment p ; clipSegment segment p in
-      let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment segment in
-      fill_poly [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|];
-      set_color black ;
-      draw_segments [|nyo, zco, nyo, zfo|];
-      draw_segments [|nyd, zfd, nyd, zcd|];
-      revert_color () 
-    with NePasTraiter -> ()
-      in match mode with
+        match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD -> fill_background Options.bg ; set_color coral ; 
+        | ThreeD ->  clear_graph () ; fill_background Options.bg ; set_color coral ; 
                     (*fill_rect 0 (win_h/2) win_w (win_h/2) ;*) revert_color (); set_color blue ;
-                    Bsp.rev_parse parseFunction3d bsp (p.pos) ; revert_color ();
+                    Bsp.parse (parseFunction3d p !Options.draw_contour !Options.fill_wall) bsp (p.pos) ; revert_color ();
                     if Options.minimap then begin
-                    set_color white ; Bsp.parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
+                    set_color white ; Bsp.rev_parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
                     fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; 
                     drawSegment p.lAngleMinimap ; drawSegment p.rAngleMinimap;
                     revert_color ()
                     end
+                    
 

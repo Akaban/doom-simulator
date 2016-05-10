@@ -88,7 +88,10 @@ let sizeAngleMiniMap = float !step_dist
 
 let fov = !fov
 
+(* draw options *)
 let bg = Colors.grey
+let draw_contour = ref true
+let fill_wall = ref true
 
 let collision = ref true
 
@@ -96,6 +99,8 @@ let step_dist = float !step_dist
 
 let scale = !scale
 let minimap = !minimap
+
+let debug_manualRender = ref false
 
 let debug = ref false
 let debug_bsp = !debug_bsp

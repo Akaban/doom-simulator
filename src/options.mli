@@ -14,6 +14,8 @@ val wall_h : int
 val fov : int
 
 val bg : Graphics.color
+val draw_contour : bool ref
+val fill_wall : bool ref
 
 val mouse_sensitivity : int
 val angular_change : int
@@ -35,6 +37,8 @@ val xmax : float
 val scale : int
 val minimap : bool
  
+val debug_manualRender : bool ref
+
 val debug : bool ref
 val debug_bsp : bool
 

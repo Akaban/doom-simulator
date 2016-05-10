@@ -58,7 +58,20 @@ let hardFromSome = function
 
 
 let debugKeys3D k player bsp =
+  let parseF = Render.parseFunction3d player true true in
+  let parseD = Render.parseFunction3d player in
+  let f () = flush stdout in
   match k with
+    | 'r' -> printf "Draw right only\n" ; flush stdout;
+    | 'l' -> printf "Draw left only\n" ; flush stdout;
+             parseLeft parseF bsp player.pos
+    | 'c' -> printf "Clear graph\n" ; flush stdout;
+             clear_graph()
+    | 'n' -> printf "Afficher contour\n"; flush stdout;
+             Options.draw_contour := (not !Options.draw_contour)
+    | 'm' -> Options.debug_manualRender := not !Options.debug_manualRender ; if !Options.debug_manualRender then 
+              printf "Option debug manual render activated\n" else printf "Option debu manual render disabled\n" ; flush stdout
+ 
     | _ -> ()
 
 let debugKeys2D k player bsp =
