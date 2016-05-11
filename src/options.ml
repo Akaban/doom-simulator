@@ -15,7 +15,7 @@ let angularChange = ref 1
 
 let max_dist = ref 3000
 
-let fov = ref 110
+let fov = ref 60
 
 let step_dist = ref 10
 
@@ -93,9 +93,9 @@ let fov = !fov
 (* draw options *)
 let bg = Colors.grey
 let fill_color = Graphics.blue
-let contour_color = Graphics.black
+let contour_color = Graphics.white
 let draw_contour = ref true
-let fill_wall = ref false
+let fill_wall = ref true
 
 let collision = ref true
 

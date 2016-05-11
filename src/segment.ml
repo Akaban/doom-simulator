@@ -89,7 +89,10 @@ let new_segmentSimple xo yo xd yd = new_segmentPointSimple (new_point xo yo) (ne
 let new_segmentSimpleFloat xo yo xd yd =
   let fxo, fyo, fxd, fyd = floor xo, floor yo, ceil xd, ceil yd in
   let ly = fyd -. fyo in
-  let ci, ce = (yo -. fyo) /. ly, (yd -. fyo) /. ly in
+  let lx = fxd -. fxo in
+  let ci, ce = if yo <> yd then 
+    (yo -. fyo) /. ly, (yd -. fyo) /. ly else
+    (xo -. fxo) /. lx, (xd -. fxo) /. ly in
   let seg = new_segmentSimple (truncate fxo) (truncate fyo) (truncate fxd) (truncate fyd) in
   { seg with ce=ce; ci=ci}
 let new_segmentSimpleFloatWithid xo yo xd yd id =
