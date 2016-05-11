@@ -10,9 +10,26 @@ open Printf
 exception NePasTraiter
 
 let fill_background color =
-  set_color Options.bg;
+  set_color color;
   fill_rect 0 0 win_w win_h;
   revert_color ()
+
+let fill_ceiling color h =
+  set_color color ;
+  fill_rect 0 h win_w (win_h-h);
+  revert_color ()
+
+(*crée les intructions mais attends un unit de plus pour les executer*)
+let pendingDrawSegment seg color () =
+  set_color color; 
+  draw_segments seg;
+  revert_color ()
+let pendingFillPoly poly color () = 
+  set_color color;
+  fill_poly poly;
+  revert_color ()
+(*execute les instructions d'une liste*)
+let sequence = List.iter (fun s -> s ())
 
 let drawSegment s =
   let (xo,yo),(xd,yd) = real_coordInt s in
@@ -20,9 +37,6 @@ let drawSegment s =
 
 let drawSegmentScale scale s = drawSegment {s with porig={s.porig with x=s.porig.x/scale ; y=s.porig.y/scale};
                                                    pdest={s.pdest with x=s.pdest.x/scale ; y=s.pdest.y/scale}}
-
-let compteur =
-  let x = ref 0 in fun () -> x := !x +1 ; !x;; 
 
 let rotateSegment rs p tupleRef =
   let (oxo,oyo),(oxd,oyd) = Segment.real_coord !rs in
@@ -36,15 +50,12 @@ let rotateSegment rs p tupleRef =
       tupleRef := xo, yo, xd, yd
       (*rs := new_segmentSimple (truncate xo) (truncate yo) (truncate xd) (truncate yd)*)
 
-(*Projette le segment sur l'écran et renvoie les sommets du polygone*)
-  
-           
-let parseFunction3d p contour fill s =
+let parseFunction3d p contour fill minZc drawList s =
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
     let xo,yo,xd,yd = !tupleRef in
-    if  xo <= 1. && xd <= 1.  then raise NePasTraiter
+    if  xo <= 1. && xd <= 1.  then raise NePasTraiter (*on clippe le segment*)
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
@@ -64,7 +75,8 @@ let parseFunction3d p contour fill s =
     let hsDiv = win_h /. 2. in
     let zc x = hsDiv +. (float_of_int (ceiling_h - !eye_h) *. d_focale) /. x in
     let zf x = hsDiv +. (float_of_int (floor_h - !eye_h) *. d_focale) /. x in
-    let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd in
+    let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd in (* calcul des zc et zf*)
+    (*correction zc zf*)
     let du, dl = (zcd -. zco) /. (nyd -. nyo), (zfd -. zfo) /. (nyd -. nyo) in
     let nyo, zco, zfo = if nyo < 0. then 0., zco -. (nyo *. du), zfo -. (nyo *. dl)
     else if nyo > win_h then win_h, zco -. ((nyo -. win_h) *. du), zfo -. ((nyo -. win_h) *. dl)
@@ -73,6 +85,8 @@ let parseFunction3d p contour fill s =
     else if nyd > win_h then win_h, zcd -. ((nyd -. win_h) *. du), zfd -. ((nyd -. win_h) *. dl)
     else nyd,zcd,zfd in
     let nyo, zco, zfo, nyd, zcd, zfd = truncate nyo, truncate zco, truncate zfo, truncate nyd, truncate zcd, truncate zfd in
+    if zco < !minZc then minZc := zco ; (*nécessaire pour coder la manière dont on veut representer le plafond*)
+    if zcd < !minZc then minZc := zcd ;
     if !Options.debug then begin
       Printf.printf "Segment nb %d, porig: (%d,%d) porigUp: (%d,%d) pdest: (%d,%d) pdestUp :(%d,%d)\n" s.id 
                 nyo zco nyo zfo nyd zfd nyd zcd; flush stdout; 
@@ -85,17 +99,17 @@ let parseFunction3d p contour fill s =
   try
     let () = rotateSegment segment p tupleRef ; clipSegment segment p in
     let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment s in
-    if fill then begin
-      set_color Options.fill_color ;
-      fill_poly [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|];
-      revert_color () end ;
-      if contour then begin
-        set_color Options.contour_color ;
-      draw_segments [|nyo, zco, nyo, zfo|];
-      draw_segments [|nyo, zfo, nyd, zfd|];
-      draw_segments [|nyo, zco, nyd, zcd|];
-      draw_segments [|nyd, zfd, nyd, zcd|];
-      revert_color () end 
+    if fill then drawList := pendingFillPoly 
+          [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|] Options.fill_color :: !drawList;
+    if contour then begin
+      let c=Options.contour_color in 
+      let contours = List.map (fun s -> pendingDrawSegment s c)
+      [[|nyo, zco, nyo, zfo|];
+      [|nyo, zfo, nyd, zfd|];
+      [|nyo, zco, nyd, zcd|];
+      [|nyd, zfd, nyd, zcd|]] in
+      drawList := List.rev_append contours !drawList
+      end 
     with NePasTraiter -> ()
 
 
@@ -108,10 +122,15 @@ let display bsp p =
         match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD ->  clear_graph () ; fill_background Options.bg ; set_color coral ; 
-                    (*fill_rect 0 (win_h/2) win_w (win_h/2) ;*) revert_color (); 
-                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall) bsp (p.pos) ;
-                    if !Options.debug then begin
+        | ThreeD ->  let minZc = ref win_h in
+                     let drawList = ref [] in
+                     clear_graph () ; fill_background Options.bg ; 
+                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall minZc drawList) bsp (p.pos) ;
+                    fill_ceiling Options.ceiling_color !minZc ;
+                    sequence (List.rev !drawList); (*on dessine le tout sachant 
+                                                   que nos instructions sont à l'envers 
+                                                   donc on renverse*)
+                    if !Options.debug then begin (*séparateur pour y voir plus clair dans le debug*)
                       Printf.printf "\n_____________________________________________________________\n" ; flush stdout end ;
                     if Options.minimap then begin
                     set_color white ; Bsp.rev_parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;

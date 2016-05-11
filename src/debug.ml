@@ -65,11 +65,7 @@ let pauseGame pauseKey =
   done ; ()
 
 let debugKeys3D k player bsp =
-  let parseF = Render.parseFunction3d player true true in
   match k with
-    | 'r' -> printf "Draw right only\n" ; flush stdout;
-    | 'l' -> printf "Draw left only\n" ; flush stdout;
-             parseLeft parseF bsp player.pos
     | 'c' -> printf "Clear graph\n" ; flush stdout;
              clear_graph()
     | 'n' -> printf "Afficher contour\n"; flush stdout;

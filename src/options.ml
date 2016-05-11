@@ -93,9 +93,10 @@ let fov = !fov
 
 (* draw options *)
 let bg = Colors.grey
-let fill_color = Graphics.blue
-let contour_color = Graphics.white
-let draw_contour = ref false
+let ceiling_color = Colors.bluesky
+let fill_color = Graphics.white
+let contour_color = Graphics.black
+let draw_contour = ref true
 let fill_wall = ref true
 
 let collision = ref true

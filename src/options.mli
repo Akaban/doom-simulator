@@ -17,6 +17,7 @@ val eye_h_debout : int
 val fov : int
 
 val bg : Graphics.color
+val ceiling_color : Graphics.color
 val fill_color : Graphics.color
 val contour_color : Graphics.color
 val draw_contour : bool ref

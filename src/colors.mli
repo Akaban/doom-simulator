@@ -1,5 +1,6 @@
 val grey : Graphics.color
 val coral : Graphics.color
+val bluesky : Graphics.color
 
 val current : Graphics.color ref
 val previous : Graphics.color option ref

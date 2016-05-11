@@ -2,6 +2,7 @@ open Graphics
 
 let grey = rgb 160 160 160
 let coral = rgb 83 37 28
+let bluesky = rgb 178 229 239
 
 let current = ref black
 let previous = ref None
