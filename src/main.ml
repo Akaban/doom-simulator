@@ -17,7 +17,8 @@ let actions k player bsp runData = match k with
   | 'e' -> rotate Right player
   | 'a' -> rotate Left player
   | 'c' -> crouchPlayer player
-  | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp 
+  | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp
+  | '\027' (*echap*) -> raise Exit
   | _ -> Debug.debugKeys k player bsp
 
 let mouseDirection (x1,y1) (x2,y2) =
@@ -45,7 +46,8 @@ let () =
            if ev.keypressed then
              match keyToDir ev.key with
                   | Some m -> move m player !Bsp.instanceBsp 
-                  | _ -> actions ev.key player !Bsp.instanceBsp runningData (*Debug.debugKeys ev.key player bsp*) 
+                  | _ -> actions ev.key player !Bsp.instanceBsp runningData
+          else if ev.button then ()
           else let dirAngle = mouseDirection (mx, my) ((ev.mouse_x), (ev.mouse_y)) in
             match dirAngle with
                 | Some Right -> rotate Right player
