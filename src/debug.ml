@@ -70,6 +70,8 @@ let debugKeys3D k player bsp =
              clear_graph()
     | 'n' -> printf "Afficher contour\n"; flush stdout;
              Options.draw_contour := (not !Options.draw_contour)
+    | 'f' -> printf "Afficher murs\n"; flush stdout;
+             Options.fill_wall := (not !Options.fill_wall)
     | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
     | 'p' -> pauseGame 'p'
     | _ -> raise NotAnAction

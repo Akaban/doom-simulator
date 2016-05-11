@@ -1,4 +1,8 @@
-type tmode = TwoD | ThreeD 
+type tmode = TwoD | ThreeD
+
+type runningData =
+  { labInitPos : Point.t ;
+    labInitAngle : int }
 
 val mode : tmode
 
@@ -15,6 +19,12 @@ val eye_h_accroupi : int
 val eye_h_debout : int
 
 val fov : int
+
+val defaultCeilingh : int
+val ceilingh : int ref
+val ceilingMultiplicatorRange : int
+val ceilingMultiplicator : float
+val ceilingMultiplicator2 : float
 
 val bg : Graphics.color
 val ceiling_color : Graphics.color

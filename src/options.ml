@@ -1,4 +1,10 @@
-type tmode = TwoD | ThreeD 
+type tmode = TwoD | ThreeD
+
+(*des informations utiles sur la partie que l'on
+ * pourra donner à actions *)
+type runningData =
+  { labInitPos : Point.t ;
+    labInitAngle : int }
 
 let usage = "usage: ./bsp file.lab"
 let file = ref ""
@@ -13,7 +19,7 @@ let win_h = ref 800
 let mouse_sensitivity = ref 1
 let angularChange = ref 1
 
-let max_dist = ref 3000
+let max_dist = ref 5000
 
 let fov = ref 60
 
@@ -92,6 +98,12 @@ let sizeAngleMiniMap = float !step_dist
 let fov = !fov
 
 (* draw options *)
+let defaultCeilingh = truncate (float win_h /. 1.6) (*hauteur de début du plafond (affichage)*)
+let ceilingh = ref defaultCeilingh
+let ceilingMultiplicatorRange = 1500
+let ceilingMultiplicator = 1. /. 300.
+let ceilingMultiplicator2 = 1. /. 1000.
+
 let bg = Colors.grey
 let ceiling_color = Colors.bluesky
 let fill_color = Graphics.white

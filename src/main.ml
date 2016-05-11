@@ -5,12 +5,6 @@ open Point
 open Colors
 open Debug
 
-(*des informations utiles sur la partie que l'on
- * pourra donner à actions *)
-type runningData =
-  { labInitPos : Point.t ;
-    labInitAngle : int }
-
 let keyToDir = function
   | 'z' -> Some MFwd
   | 'q' -> Some MLeft
@@ -41,7 +35,7 @@ let () =
   let runningData = {labInitPos=new_point px py;labInitAngle=pa} in
   Bsp.instanceBsp := bsp ;
   open_graph (Printf.sprintf " %dx%d" win_w win_h); set_window_title "Doom-Like Project 0.1";
-       auto_synchronize false; Render.display bsp player ; synchronize () ;
+       auto_synchronize false; Render.display bsp player runningData ; synchronize () ;
        try
          while true do
           try
@@ -57,7 +51,7 @@ let () =
                 | Some Right -> rotate Right player
                 | Some Left  -> rotate Left player 
                 | None -> raise NotAnAction end;
-               Render.display !Bsp.instanceBsp player;
+               Render.display !Bsp.instanceBsp player runningData;
                synchronize ();
           with Debug.NotAnAction -> ();
          done;

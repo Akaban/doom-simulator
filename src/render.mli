@@ -1,2 +1,2 @@
-val display : Bsp.t -> Player.t -> unit
+val display : Bsp.t -> Player.t -> Options.runningData -> unit
 

@@ -50,7 +50,7 @@ let rotateSegment rs p tupleRef =
       tupleRef := xo, yo, xd, yd
       (*rs := new_segmentSimple (truncate xo) (truncate yo) (truncate xd) (truncate yd)*)
 
-let parseFunction3d p contour fill minZc drawList s =
+let parseFunction3d p contour fill maxZf drawList s =
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
@@ -85,8 +85,8 @@ let parseFunction3d p contour fill minZc drawList s =
     else if nyd > win_h then win_h, zcd -. ((nyd -. win_h) *. du), zfd -. ((nyd -. win_h) *. dl)
     else nyd,zcd,zfd in
     let nyo, zco, zfo, nyd, zcd, zfd = truncate nyo, truncate zco, truncate zfo, truncate nyd, truncate zcd, truncate zfd in
-    if zco < !minZc then minZc := zco ; (*nécessaire pour coder la manière dont on veut representer le plafond*)
-    if zcd < !minZc then minZc := zcd ;
+    if zfo > !maxZf then maxZf := zfo ; (*nécessaire pour coder la manière dont on veut representer le plafond*)
+    if zfd > !maxZf then maxZf := zfd ;
     if !Options.debug then begin
       Printf.printf "Segment nb %d, porig: (%d,%d) porigUp: (%d,%d) pdest: (%d,%d) pdestUp :(%d,%d)\n" s.id 
                 nyo zco nyo zfo nyd zfd nyd zcd; flush stdout; 
@@ -115,18 +115,31 @@ let parseFunction3d p contour fill minZc drawList s =
 
 let truncate4tuple (x,y,z,t) = truncate x, truncate y, truncate z, truncate t 
 
-let display bsp p =
+let rec findCeilingHeight ypos = let range=ceilingMultiplicatorRange in
+    function
+      | y when y <= range || y >= -(range) -> defaultCeilingh + 
+                            truncate (float_of_int (y-ypos) *. ceilingMultiplicator)
+      | y when y < -(range) -> let start,rest = findCeilingHeight ypos (-range),
+                                                y + range
+                               in truncate (float_of_int (rest-ypos) *. ceilingMultiplicator2) +
+                                  start
+      | y -> let start,rest = findCeilingHeight ypos range, y - range in
+                truncate (float_of_int (rest-ypos) *. ceilingMultiplicator2) + start
+
+let display bsp p runData =
   let parseFunction2d = drawSegment in
   let parseMiniMap = drawSegmentScale Options.scale in
   let not_zero x = if x <= 1 then 1 else x in
         match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD ->  let minZc = ref win_h in
+        | ThreeD ->  let maxZf = ref 0 in
                      let drawList = ref [] in
+                     let ceilh = findCeilingHeight runData.labInitPos.y p.pos.y in
                      clear_graph () ; fill_background Options.bg ; 
-                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall minZc drawList) bsp (p.pos) ;
-                    fill_ceiling Options.ceiling_color !minZc ;
+                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall maxZf drawList) bsp (p.pos) ;
+                    fill_ceiling Options.ceiling_color (max !maxZf ceilh) ;
+                    printf "maxZf = %d ceilh = %d\n" !maxZf ceilh ; flush stdout;
                     sequence (List.rev !drawList); (*on dessine le tout sachant 
                                                    que nos instructions sont à l'envers 
                                                    donc on renverse*)
