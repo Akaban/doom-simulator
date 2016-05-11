@@ -2,6 +2,8 @@ type t = {x : int; y : int}
 
 val new_point : int -> int -> t
 
+val distance : t -> t -> float
+
 val divPoint : t -> int -> t
 
 val toString : t -> string

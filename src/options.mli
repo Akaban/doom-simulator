@@ -1,4 +1,4 @@
-type tmode = TwoD | ThreeD | TwoDdebug
+type tmode = TwoD | ThreeD 
 
 val mode : tmode
 
@@ -10,7 +10,9 @@ val win_h : int
 val ceiling_h : int
 val floor_h : int
 val wall_h : int
-val eye_h : int
+val eye_h : int ref
+val eye_h_accroupi : int
+val eye_h_debout : int
 
 val fov : int
 
@@ -25,7 +27,9 @@ val angular_change : int
 
 val max_dist : float
 
-val step_dist : float
+val step_dist : float ref
+val step_dist_debout : float
+val step_dist_accroupi : float
 
 val size2d : int
 

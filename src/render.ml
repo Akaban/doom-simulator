@@ -43,8 +43,8 @@ let parseFunction3d p contour fill s =
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
-    let xo,yo,xd,yd = !tupleRef in 
-    if  xo <= 1. && xd <= 1. then raise NePasTraiter
+    let xo,yo,xd,yd = !tupleRef in
+    if  xo <= 1. && xd <= 1.  then raise NePasTraiter
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
@@ -62,10 +62,8 @@ let parseFunction3d p contour fill s =
   else
     let win_h = float_of_int win_h in 
     let hsDiv = win_h /. 2. in
-    let zcConst, zfConst = hsDiv +. (float_of_int (ceiling_h - eye_h) *. d_focale) ,
-                         hsDiv +. (float_of_int (floor_h - eye_h) *. d_focale)  in
-    let zc x = hsDiv +. (float_of_int (ceiling_h - eye_h) *. d_focale) /. x in
-    let zf x = hsDiv +. (float_of_int (floor_h - eye_h) *. d_focale) /. x in
+    let zc x = hsDiv +. (float_of_int (ceiling_h - !eye_h) *. d_focale) /. x in
+    let zf x = hsDiv +. (float_of_int (floor_h - !eye_h) *. d_focale) /. x in
     let zco, zfo, zcd, zfd = zc xo, zf xo, zc xd, zf xd in
     let du, dl = (zcd -. zco) /. (nyd -. nyo), (zfd -. zfo) /. (nyd -. nyo) in
     let nyo, zco, zfo = if nyo < 0. then 0., zco -. (nyo *. du), zfo -. (nyo *. dl)
@@ -105,13 +103,6 @@ let truncate4tuple (x,y,z,t) = truncate x, truncate y, truncate z, truncate t
 
 let display bsp p =
   let parseFunction2d = drawSegment in
-  let parseFunction2ddebug s =
-    let rs = ref s in
-    let tupleRef = ref (0.,0.,0.,0.) in
-    let () = rotateSegment rs p tupleRef in
-    let xo,yo,xd,yd = truncate4tuple !tupleRef in
-    let decX,decY = win_w / 2, win_h/2 in
-    draw_segments [|xo + decX, yo + decY, xd + decX , yd + decY|] in
   let parseMiniMap = drawSegmentScale Options.scale in
   let not_zero x = if x <= 1 then 1 else x in
         match mode with
@@ -128,11 +119,5 @@ let display bsp p =
                     drawSegment p.lAngleMinimap ; drawSegment p.rAngleMinimap;
                     revert_color ()
                     end
-        | TwoDdebug -> clear_graph() ; Bsp.parse parseFunction2ddebug bsp (p.pos) ;
-                       let ls,rs = Player.calculateAngleMinimapS (new_point (win_w/2) (win_h/2)) 0 false in
-                       set_color red ;
-                       drawSegment ls ; drawSegment rs ; revert_color () ;
-                       set_color blue ; moveto (win_w - 20) (10) ; 
-                       draw_string (sprintf "%d" p.pa) ; revert_color ()
                     
 

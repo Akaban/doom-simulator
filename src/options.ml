@@ -1,4 +1,4 @@
-type tmode = TwoD | ThreeD | TwoDdebug
+type tmode = TwoD | ThreeD 
 
 let usage = "usage: ./bsp file.lab"
 let file = ref ""
@@ -31,7 +31,6 @@ let debug_bsp = ref false
 let set_mode = function
   | "2D" -> mode := TwoD
   | "3D" -> mode := ThreeD
-  | "2DD" -> mode := TwoDdebug
   | _ -> raise (Arg.Bad "2D or 3D only")
 
 
@@ -77,13 +76,15 @@ let xmin = float !xmin
 let ceiling_h = win_h / 3
 let floor_h = 0
 let wall_h = ceiling_h - floor_h
-let eye_h = wall_h - (wall_h /3)
+let eye_h_debout = wall_h - wall_h/3
+let eye_h_accroupi = eye_h_debout / 2
+let eye_h = ref eye_h_debout
 
 let mode = !mode
 
 let size2d = !size2d
 
-let wall_collision_size = float !step_dist *. 2.
+let wall_collision_size = float !step_dist *. 1.5
 
 let angleMiniMap = 23
 let sizeAngleMiniMap = float !step_dist
@@ -94,12 +95,16 @@ let fov = !fov
 let bg = Colors.grey
 let fill_color = Graphics.blue
 let contour_color = Graphics.white
-let draw_contour = ref true
+let draw_contour = ref false
 let fill_wall = ref true
 
 let collision = ref true
 
-let step_dist = float !step_dist
+(*si notre joueur est accroupi alors il est logique qu'il
+ * avance moins vite donc un step_dist moindre *)
+let step_dist_debout = float !step_dist
+let step_dist_accroupi = step_dist_debout /. 2.
+let step_dist = ref step_dist_debout
 
 let scale = !scale
 let minimap = !minimap

@@ -8,21 +8,20 @@ type t = {
   mutable pa : int;
   mutable oldpos : Point.t;
   mutable rAngleMinimap : Segment.t;
-  mutable lAngleMinimap : Segment.t
+  mutable lAngleMinimap : Segment.t;
+  mutable crouch : bool
 }
 
-let calculateAngleMinimapS p pa bscale =
-let divPoint p scale = if bscale then divPoint p scale else p in
+let calculateAngleMinimap p pa =
 let divPos = divPoint p scale in
   let rightAnglePos = translatePointWithAngle divPos (sizeAngleMiniMap,0.) (pa-angleMiniMap) in
   let leftAnglePos = translatePointWithAngle divPos (sizeAngleMiniMap,0.) (pa+angleMiniMap) in
   new_segmentPointSimple divPos rightAnglePos, new_segmentPointSimple divPos leftAnglePos
 
-let calculateAngleMinimap p pa = calculateAngleMinimapS p pa true
 
 let new_player pos pa =
   let rMinimap,lMinimap = calculateAngleMinimap pos pa in
-  { pos=pos;pa=pa;oldpos=pos;
+  { pos=pos;pa=pa;oldpos=pos;crouch=false;
     rAngleMinimap = rMinimap;
     lAngleMinimap = lMinimap}
                           
@@ -42,12 +41,32 @@ let rotate d p = match d with
              let lMinimap, rMinimap = calculateAngleMinimap p.pos p.pa in 
              p.rAngleMinimap <- lMinimap; p.lAngleMinimap <- rMinimap 
  
+let crouchPlayer p =
+  if p.crouch then begin
+      p.crouch <- false ; eye_h := eye_h_debout ;
+      step_dist := step_dist_debout end
+  else begin
+    p.crouch <- true ; eye_h := eye_h_accroupi ;
+    step_dist := step_dist_accroupi end
 
 type mv = MFwd | MBwd | MLeft | MRight
 
+let tp (tpx,tpy,tpa) p bsp = match mode with
+  | ThreeD -> let npos = new_point tpx tpy in
+              begin match detect_collision npos bsp with
+                    | Some s -> Printf.printf "Teleportation annule car il y a une collision avec %s\n"
+                                (toString s) ; flush stdout
+                    | None -> p.pos <- npos  ; p.pa <- tpa
+              end ;
+                    let lMinimap, rMinimap = calculateAngleMinimap npos p.pa in
+                    p.rAngleMinimap <- lMinimap ; p.lAngleMinimap <- rMinimap
+              
+
+  | _ -> ()
+
 let move d p bsp = 
   match mode with
-  | TwoD -> let step = truncate step_dist in
+  | TwoD -> let step = truncate !step_dist in
             let dx, dy = 
               match d with
                   | MFwd -> 0 , step
@@ -65,13 +84,12 @@ let move d p bsp =
                           end
                 | None -> p.oldpos <- p.pos ; p.pos <- new_pos
             end
-  | TwoDdebug        
   | ThreeD -> let dx, dy =
                 match d with
-                  | MLeft -> 0. , step_dist
-                  | MRight -> 0. , -.(step_dist)
-                  | MBwd -> -.(step_dist), 0.
-                  | MFwd -> step_dist, 0.
+                  | MLeft -> 0. , !step_dist
+                  | MRight -> 0. , -.(!step_dist)
+                  | MBwd -> -.(!step_dist), 0.
+                  | MFwd -> !step_dist, 0.
                in let new_pos = translatePointWithAngle p.pos (dx,dy) p.pa
                in match (detect_collision new_pos bsp) with
                   | Some s -> ()

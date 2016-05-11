@@ -66,8 +66,6 @@ let pauseGame pauseKey =
 
 let debugKeys3D k player bsp =
   let parseF = Render.parseFunction3d player true true in
-  let parseD = Render.parseFunction3d player in
-  let f () = flush stdout in
   match k with
     | 'r' -> printf "Draw right only\n" ; flush stdout;
     | 'l' -> printf "Draw left only\n" ; flush stdout;
@@ -117,10 +115,9 @@ let debugKeys2D k player bsp =
       | 'l' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
                else let seg = hardFromSome !followSeg in let newbsp = Bsp.build_bspWithPivot seg (toList bsp) in 
                printf "Le BSP est update, le pivot est desormais %s\n" (toString seg) ; flush stdout ; Bsp.updateBsp newbsp ; clear_graph ()
-      | _ -> () ;;
+      | _ -> raise NotAnAction ;;
                 
 
 let debugKeys k player bsp = match Options.mode with
                              | Options.TwoD -> debugKeys2D k player bsp
                              | Options.ThreeD -> debugKeys3D k player bsp
-                             | _ -> raise NotAnAction
