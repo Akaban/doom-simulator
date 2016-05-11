@@ -44,16 +44,16 @@ let parseFunction3d p contour fill s =
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
     let xo,yo,xd,yd = !tupleRef in 
-    if  xo < 1. && xd < 1. then raise NePasTraiter
-    else if xo < 1. then tupleRef := 1., 
-          (yo +. (1. -. xo) *. (tangle !rs)),
+    if  xo <= 1. && xd <= 1. then raise NePasTraiter
+    else if xo <= 1. then tupleRef := 1., 
+          (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
-    else if xd < 1. then tupleRef := xo, yo, 1., 
-            (yd +. (1. -. xd) *. (tangle !rs)) ;
+    else if xd <= 1. then tupleRef := xo, yo, 1., 
+            (yd +. (1. -. xd) *. (tangleTuple !tupleRef)) ;
             if xo > max_dist then tupleRef := max_dist, yo, xd, yd;
           if xd > max_dist then tupleRef := xo, yo, max_dist, yd in
 
-  let projectionSegment () =
+  let projectionSegment s =
     let d_focale = (float_of_int win_w /. 2.) /. (dtan (fov / 2)) in
     let xo,yo,xd,yd = !tupleRef in
     let win_w = float_of_int win_w in
@@ -75,18 +75,18 @@ let parseFunction3d p contour fill s =
     else if nyd > win_h then win_h, zcd -. ((nyd -. win_h) *. du), zfd -. ((nyd -. win_h) *. dl)
     else nyd,zcd,zfd in
     let nyo, zco, zfo, nyd, zcd, zfd = truncate nyo, truncate zco, truncate zfo, truncate nyd, truncate zcd, truncate zfd in
-    (*if !Options.debug then begin
-      Printf.printf "Segment nb %d, porig: (%d,%d) porigUp: (%d,%d) pdest: (%d,%d) pdestUp :(%d,%d)\n" !rs.id 
+    if !Options.debug then begin
+      Printf.printf "Segment nb %d, porig: (%d,%d) porigUp: (%d,%d) pdest: (%d,%d) pdestUp :(%d,%d)\n" s.id 
                 nyo zco nyo zfo nyd zfd nyd zcd; flush stdout; 
     Printf.printf "             which has rotated coordinates porig=(%d,%d) pdest=(%d,%d)\n" 
     (truncate xo) (truncate yo) (truncate xd) (truncate yd) ; flush stdout ;
-    end ;*)
+    end ;
   nyo, zco, zfo, nyd, zcd, zfd in
 
   let segment = ref s in
   try
     let () = rotateSegment segment p tupleRef ; clipSegment segment p in
-    let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment () in
+    let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment s in
     if fill then begin
       set_color Options.fill_color ;
       fill_poly [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|];

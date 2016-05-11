@@ -36,8 +36,13 @@ let tposToString = function
 
 let tangle s = (*tangente de l'angle du segment*)
   let a = float_of_int (s.pdest.y - s.porig.y)
-  in let b = float_of_int (s.pdest.x - s.porig.y)
+  in let b = float_of_int (s.pdest.x - s.porig.x)
   in a /. b
+
+let tangleTuple (xo,yo,xd,yd) =
+  let a = yd -. yo in
+  let b = xd -. xo in
+  a /. b
 
 let angle s = (*angle du segment*)
  Trigo.datan (tangle s)

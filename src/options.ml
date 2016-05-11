@@ -83,7 +83,7 @@ let mode = !mode
 
 let size2d = !size2d
 
-let wall_collision_size = float !step_dist *. 1.5
+let wall_collision_size = float !step_dist *. 2.
 
 let angleMiniMap = 23
 let sizeAngleMiniMap = float !step_dist

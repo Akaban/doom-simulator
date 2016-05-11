@@ -49,3 +49,4 @@ val split : t -> t list -> t list * t list
 
 val angle : t -> float
 val tangle : t -> float
+val tangleTuple : (float*float*float*float) -> float
