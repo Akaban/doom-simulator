@@ -4,6 +4,7 @@ open Graphics
 open Printf
 open Player
 open Bsp
+open Options
 
 exception NotAnAction
 
@@ -64,7 +65,8 @@ let pauseGame pauseKey =
     if ev.keypressed then key := Some ev.key;
   done ; ()
 
-let debugKeys3D k player bsp =
+
+let debugKeys3D k player bsp runData =
   match k with
     | 'c' -> printf "Clear graph\n" ; flush stdout;
              clear_graph()
@@ -74,6 +76,8 @@ let debugKeys3D k player bsp =
              Options.fill_wall := (not !Options.fill_wall)
     | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
     | 'p' -> pauseGame 'p'
+    | 'i' -> runData.playerInfo <- not runData.playerInfo ; if runData.playerInfo then printf "Option %s activated\n" "info-joueur"
+            else printf "Option %s disabled\n" "info-joueur" ; flush stdout
     | _ -> raise NotAnAction
 
 let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
@@ -118,6 +122,6 @@ let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
       | _ -> raise NotAnAction ;;
                 
 
-let debugKeys k player bsp = match Options.mode with
+let debugKeys k player bsp runData = match Options.mode with
                              | Options.TwoD -> debugKeys2D k player bsp
-                             | Options.ThreeD -> debugKeys3D k player bsp
+                             | Options.ThreeD -> debugKeys3D k player bsp runData

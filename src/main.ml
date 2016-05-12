@@ -5,6 +5,10 @@ open Point
 open Colors
 open Debug
 
+let newRunData initPosX initPosY initAngle =
+  { labInitPos=new_point initPosX initPosY; labInitAngle=initAngle;
+   playerInfo=false}
+
 let keyToDir = function
   | 'z' -> Some MFwd
   | 'q' -> Some MLeft
@@ -18,9 +22,10 @@ let actions k player bsp runData = match k with
   | 'a' -> rotate Left player
   | 'c' -> crouchPlayer player
   | 'b' -> rushPlayer player
+  | ' ' -> Render.jumpAnimation bsp player runData
   | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp
   | '\027' (*echap*) -> raise Exit
-  | _ -> Debug.debugKeys k player bsp
+  | _ -> Debug.debugKeys k player bsp runData
 
 let mouseDirection (x1,y1) (x2,y2) =
   let mouseSegment = Segment.new_segmentSimple x1 y1 x2 y2 in
@@ -34,7 +39,7 @@ let () =
   let seglist2 = List.map (fun (xo,yo,xd,yd) -> Segment.new_segment xo yo xd yd) seglist in
   let bsp = Bsp.build_bsp seglist2 in
   let player = Player.new_player (Point.new_point px py) pa in
-  let runningData = {labInitPos=new_point px py;labInitAngle=pa} in
+  let runningData = newRunData px py pa in
   Bsp.instanceBsp := bsp ;flush stdout;
   let s = Printf.sprintf " %dx%d" win_w win_h in
   open_graph s; set_window_title "Doom-Like Project 0.1";

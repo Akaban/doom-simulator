@@ -2,7 +2,9 @@ type tmode = TwoD | ThreeD
 
 type runningData =
   { labInitPos : Point.t ;
-    labInitAngle : int }
+    labInitAngle : int;
+    mutable playerInfo : bool
+  }
 
 val mode : tmode
 
@@ -42,6 +44,10 @@ val step_dist : float ref
 val step_dist_debout : float
 val step_dist_accroupi : float
 val step_dist_rush : float
+
+val gravity : float
+val jumpSpeed : float
+val jumpPeak : int
 
 val size2d : int
 

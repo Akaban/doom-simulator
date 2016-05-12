@@ -129,6 +129,7 @@ let rec findCeilingHeight ypos = let range=ceilingMultiplicatorRange in
       | y -> let start,rest = findCeilingHeight ypos range, y - range in
                 truncate (float_of_int (rest-ypos) *. ceilingMultiplicator2) + start
 
+
 let display bsp p runData =
   let parseFunction2d = drawSegment in
   let parseMiniMap = drawSegmentScale Options.scale in
@@ -138,7 +139,7 @@ let display bsp p runData =
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
         | ThreeD ->  let maxZf = ref 0 in
                      let drawList = ref [] in
-                     let ceilh = findCeilingHeight runData.labInitPos.y p.pos.y in
+                     let ceilh = defaultCeilingh in
                      clear_graph () ; fill_background Options.bg ; 
                     Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall maxZf drawList) bsp (p.pos) ;
                     fill_ceiling Options.ceiling_color (max !maxZf ceilh) ;
@@ -152,6 +153,30 @@ let display bsp p runData =
                     fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; 
                     drawSegment p.lAngleMinimap ; drawSegment p.rAngleMinimap;
                     revert_color ()
-                    end
-                    
+                    end;
+                    if runData.playerInfo then begin
+                      let cx, cy = current_x (), current_y () in
+                      moveto (win_w - 120) 5 ;
+                      set_color blue ;
+                      draw_string (Printf.sprintf "(x=%d,y=%d,a=%d)" 
+                                   p.pos.x p.pos.y p.pa);
+                      moveto cx cy ; revert_color () end
+
+
+let rec restart f arg =
+  try f arg with Unix.Unix_error(Unix.EINTR,_,_) -> restart f arg
+
+let fsleep (time: float) = let _ = restart (Unix.select [] [] []) time in ()
+
+let jumpAnimation bsp p runData =
+  let origine,peak = !eye_h,!eye_h + jumpPeak in
+  while !eye_h < peak do
+    fsleep (1./.jumpSpeed) ;
+    eye_h := !eye_h + 1;
+    display bsp p runData
+  done;
+  while !eye_h > origine do
+    fsleep (1./.gravity) ;
+    eye_h := !eye_h - 1;
+    display bsp p runData done;;                   
 

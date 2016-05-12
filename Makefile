@@ -12,7 +12,7 @@ PACKAGES = # sdl
 COMPILE = $(OCAMLFIND) $(OCAMLC) # -package $(PACKAGES)
 COMPILEOPT = $(OCAMLFIND) $(OCAMLOPT) # -package $(PACKAGES)
 
-LIBS = str.cma graphics.cma
+LIBS = str.cma graphics.cma unix.cma
 # bigarray.cma sdl.cma
 LIBOPTS = $(LIBS:.cma=.cmxa)
 

@@ -4,7 +4,9 @@ type tmode = TwoD | ThreeD
  * pourra donner à actions *)
 type runningData =
   { labInitPos : Point.t ;
-    labInitAngle : int }
+    labInitAngle : int ;
+    mutable playerInfo : bool
+  }
 
 let usage = "usage: ./bsp file.lab"
 let file = ref ""
@@ -19,7 +21,7 @@ let win_h = ref 800
 let mouse_sensitivity = ref 1
 let angularChange = ref 1
 
-let max_dist = ref 5000
+let max_dist = ref 20000
 
 let fov = ref 60
 
@@ -119,6 +121,11 @@ let step_dist_debout = float !step_dist
 let step_dist_accroupi = step_dist_debout /. 2.
 let step_dist_rush = step_dist_debout *. 2.
 let step_dist = ref step_dist_debout
+
+(*gravite/saut*)
+let gravity = 20.
+let jumpPeak = 15
+let jumpSpeed = 7. (*chaque seconde prends jumpSpeed de hauteur jusqu'a jumpPeak*)
 
 let scale = !scale
 let minimap = !minimap
