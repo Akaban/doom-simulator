@@ -41,6 +41,7 @@ val max_dist : float
 val step_dist : float ref
 val step_dist_debout : float
 val step_dist_accroupi : float
+val step_dist_rush : float
 
 val size2d : int
 

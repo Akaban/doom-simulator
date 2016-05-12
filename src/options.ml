@@ -98,7 +98,7 @@ let sizeAngleMiniMap = float !step_dist
 let fov = !fov
 
 (* draw options *)
-let defaultCeilingh = truncate (float win_h /. 1.6) (*hauteur de début du plafond (affichage)*)
+let defaultCeilingh = truncate (float win_h /. 2.) (*hauteur de début du plafond (affichage)*)
 let ceilingh = ref defaultCeilingh
 let ceilingMultiplicatorRange = 1500
 let ceilingMultiplicator = 1. /. 300.
@@ -117,6 +117,7 @@ let collision = ref true
  * avance moins vite donc un step_dist moindre *)
 let step_dist_debout = float !step_dist
 let step_dist_accroupi = step_dist_debout /. 2.
+let step_dist_rush = step_dist_debout *. 2.
 let step_dist = ref step_dist_debout
 
 let scale = !scale

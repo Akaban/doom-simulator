@@ -15,9 +15,12 @@ let fill_background color =
   revert_color ()
 
 let fill_ceiling color h =
-  set_color color ;
-  fill_rect 0 h win_w (win_h-h);
-  revert_color ()
+  try
+    set_color color ;
+    fill_rect 0 h win_w (win_h-h);
+    revert_color ()
+  with Invalid_argument(_) -> printf "Tried to call fill_ceiling with 
+  h=%d and failed" h 
 
 (*crée les intructions mais attends un unit de plus pour les executer*)
 let pendingDrawSegment seg color () =
@@ -54,19 +57,17 @@ let parseFunction3d p contour fill maxZf drawList s =
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
-    let xo,yo,xd,yd = !tupleRef in
+    let xo,yo,xd,yd = !tupleRef in 
     if  xo <= 1. && xd <= 1.  then raise NePasTraiter (*on clippe le segment*)
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
     else if xd <= 1. then tupleRef := xo, yo, 1., 
-            (yd +. (1. -. xd) *. (tangleTuple !tupleRef)) ;
-            if xo > max_dist then tupleRef := max_dist, yo, xd, yd;
-          if xd > max_dist then tupleRef := xo, yo, max_dist, yd in
-
+            (yd +. (1. -. xd) *. (tangleTuple !tupleRef)) in
   let projectionSegment s =
     let d_focale = (float_of_int win_w /. 2.) /. (dtan (fov / 2)) in
     let xo,yo,xd,yd = !tupleRef in
+    let xo,xd = min xo max_dist, min xd max_dist in
     let win_w = float_of_int win_w in
     let nyo,nyd = (win_w /. 2.)  -. ((yo *. d_focale) /. xo), (win_w /. 2.)  -. ((yd *. d_focale) /. xd)  in
     if nyo < 0. && nyd < 0. || nyo > win_w && nyd > win_w then raise NePasTraiter
@@ -139,7 +140,6 @@ let display bsp p runData =
                      clear_graph () ; fill_background Options.bg ; 
                     Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall maxZf drawList) bsp (p.pos) ;
                     fill_ceiling Options.ceiling_color (max !maxZf ceilh) ;
-                    printf "maxZf = %d ceilh = %d\n" !maxZf ceilh ; flush stdout;
                     sequence (List.rev !drawList); (*on dessine le tout sachant 
                                                    que nos instructions sont à l'envers 
                                                    donc on renverse*)

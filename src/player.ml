@@ -9,7 +9,8 @@ type t = {
   mutable oldpos : Point.t;
   mutable rAngleMinimap : Segment.t;
   mutable lAngleMinimap : Segment.t;
-  mutable crouch : bool
+  mutable crouch : bool;
+  mutable holdRush : bool (*mode maintient sprint*)
 }
 
 let calculateAngleMinimap p pa =
@@ -21,7 +22,7 @@ let divPos = divPoint p scale in
 
 let new_player pos pa =
   let rMinimap,lMinimap = calculateAngleMinimap pos pa in
-  { pos=pos;pa=pa;oldpos=pos;crouch=false;
+  { pos=pos;pa=pa;oldpos=pos;crouch=false;holdRush=false;
     rAngleMinimap = rMinimap;
     lAngleMinimap = lMinimap}
                           
@@ -41,13 +42,24 @@ let rotate d p = match d with
              let lMinimap, rMinimap = calculateAngleMinimap p.pos p.pa in 
              p.rAngleMinimap <- lMinimap; p.lAngleMinimap <- rMinimap 
  
-let crouchPlayer p =
+let rec crouchPlayer p =
   if p.crouch then begin
       p.crouch <- false ; eye_h := eye_h_debout ;
       step_dist := step_dist_debout end
   else begin
+    if p.holdRush then rushPlayer p;
     p.crouch <- true ; eye_h := eye_h_accroupi ;
     step_dist := step_dist_accroupi end
+
+and rushPlayer p =
+  if p.holdRush then begin
+      p.holdRush <- false ;
+      step_dist := step_dist_debout end
+  else begin
+    if p.crouch then crouchPlayer p ;
+    p.holdRush <- true ; 
+    step_dist := step_dist_rush end
+
 
 type mv = MFwd | MBwd | MLeft | MRight
 

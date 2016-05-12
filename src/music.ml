@@ -45,8 +45,4 @@ let tetris =
   sol3,Croche;la3,Noire;si3,Noire;sol3,Noire;mi3,Noire;mi3,Noire |] in new_partition partition 144
 
 
-let () =
-  open_graph " 100x100";
-  play tetris ; wait_next_event [Key_pressed] ;
-  exit 0;;
 

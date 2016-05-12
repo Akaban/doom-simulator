@@ -4,7 +4,8 @@ type t = {
   mutable oldpos : Point.t;
   mutable rAngleMinimap : Segment.t;
   mutable lAngleMinimap : Segment.t;
-  mutable crouch : bool
+  mutable crouch : bool;
+  mutable holdRush: bool
 }
 
 val new_player : Point.t -> int -> t
@@ -16,6 +17,7 @@ type dir = Left | Right
 val rotate : dir -> t -> unit
 
 val crouchPlayer : t -> unit
+val rushPlayer : t -> unit
 
 type mv = MFwd | MBwd | MLeft | MRight
 

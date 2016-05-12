@@ -17,6 +17,7 @@ let actions k player bsp runData = match k with
   | 'e' -> rotate Right player
   | 'a' -> rotate Left player
   | 'c' -> crouchPlayer player
+  | 'b' -> rushPlayer player
   | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp
   | '\027' (*echap*) -> raise Exit
   | _ -> Debug.debugKeys k player bsp
@@ -34,8 +35,9 @@ let () =
   let bsp = Bsp.build_bsp seglist2 in
   let player = Player.new_player (Point.new_point px py) pa in
   let runningData = {labInitPos=new_point px py;labInitAngle=pa} in
-  Bsp.instanceBsp := bsp ;
-  open_graph (Printf.sprintf " %dx%d" win_w win_h); set_window_title "Doom-Like Project 0.1";
+  Bsp.instanceBsp := bsp ; Printf.printf "%dx%d" win_w win_h ; flush stdout;
+  let s = Printf.sprintf " %dx%d" win_w win_h in
+  open_graph s; set_window_title "Doom-Like Project 0.1";
        auto_synchronize false; Render.display bsp player runningData ; synchronize () ;
        try
          while true do
