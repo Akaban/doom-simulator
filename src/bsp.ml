@@ -49,10 +49,6 @@ let rec iter f bsp = match bsp with
   | [] -> []
   | x::xs -> x :: deleteElement e xs 
 
-let build_bspWithPivot s sl =
-  let slwos = deleteElement s sl in
-  build_bspSimple (s::slwos) Segment.split
-
 let delta_min (x, ll, lr) (s,l1,l2,min) =
   let delta = abs (List.length ll - List.length lr) in
   if delta < min then (x , ll, lr, delta)

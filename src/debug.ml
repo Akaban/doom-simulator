@@ -113,9 +113,6 @@ let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
       | 'w' -> printf "Affichage de tout les segments a droite du pivot\n"; flush stdout ;
                printf "Par rapport au pivot %s \n" (toString (getHead bsp)) ; flush stdout ;
                Bsp.iter (fun s -> printf "%s\n" (toString s); flush stdout) (Bsp.getRight bsp)
-      | 'l' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
-               else let seg = hardFromSome !followSeg in let newbsp = Bsp.build_bspWithPivot seg (toList bsp) in 
-               printf "Le BSP est update, le pivot est desormais %s\n" (toString seg) ; flush stdout ; Bsp.updateBsp newbsp ; clear_graph ()
       | 'n' -> let sbsp = bspId bsp in printf "Affichage BSP\n" ; flush stdout ; printf "%s\n" (Bsp.print_tree bsp 0) ; flush stdout
 
       | _ -> raise NotAnAction ;;
