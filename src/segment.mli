@@ -43,9 +43,9 @@ val get_position : Point.t -> t -> tpos
 
 val get_position_s : Point.t -> t -> string
 
-val split_segment : t -> t -> t option * t option
 
 val split : t -> t list -> t list * t list
+val splitWithoutId : t -> t list -> t list * t list
 
 val angle : t -> float
 val tangle : t -> float

@@ -18,6 +18,10 @@ let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
 let idCount = ref (compteur 0);;
 
 let resetIdCount () = idCount := compteur 0
+let setCompteur x = idCount := compteur x
+let getCurrentCount () = let cnt = !idCount () in
+                         setCompteur (cnt-1) ; cnt-1
+
 
 let fromSome default = function
   | Some s -> s
@@ -155,7 +159,7 @@ let coordInterception d s =
                else Some cs;; 
 
      
-let split_segment d s =
+let split_segment d s fid =
    match (coordInterception d s) with
     | None -> begin match (get_position s.porig d) with
                 | L -> (Some s,None)
@@ -167,9 +171,9 @@ let split_segment d s =
                   | _ -> (None,Some s)
                   end else
                 let s1 = {s with ce = p;
-                                id = !idCount ()}
+                                id = fid ()}
                 in let s2 = {s with ci=p;
-                                id = !idCount ()}
+                                id = fid ()}
                 in let (s1xo,s1yo),(s1xd,s1yd) = real_coordInt s1 in
                 let (s2xo,s2yo),(s2xd,s2yd) = real_coordInt s2 in
                 let ts1 = new_segment s1xo s1yo s1xd s1yd (*on utilise new_segment pour calculer les deux nouvelles zones*)
@@ -181,11 +185,11 @@ let split_segment d s =
                          | _ -> (Some rs2,Some rs1)
                    end;;
     
-let split hd r =
+let splitId hd r fid =
   let rec split_do rest (l,r) = 
     match rest with
       | (t::ts) -> begin
-            match (split_segment hd t) with
+            match (split_segment hd t fid) with
              | (Some s,None) -> split_do ts (s::l,r)
              | (None,Some s) -> split_do ts (l,s::r)
              | (Some s1,Some s2) -> split_do ts (s1::l,s2::r)
@@ -193,4 +197,7 @@ let split hd r =
              end
       | [] -> (l,r)
    in split_do r ([],[]);;
+
+let split hd r = splitId hd r (!idCount)
+let splitWithoutId hd r = splitId hd r (fun () -> (-1))
  

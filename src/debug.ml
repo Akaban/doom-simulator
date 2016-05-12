@@ -56,7 +56,7 @@ let hardFromSome = function
   | _ -> failwith "hardFromSome with None" 
 
 let pauseGame pauseKey =
-  printf "Jeu en pause, appuyer sur %c pour reprendre la partie" pauseKey ;
+  printf "Jeu en pause, appuyer sur %c pour reprendre la partie\n" pauseKey ;
   flush stdout;
   let key = ref None in
   while !key <> Some pauseKey do
@@ -76,9 +76,9 @@ let debugKeys3D k player bsp =
     | 'p' -> pauseGame 'p'
     | _ -> raise NotAnAction
 
-let debugKeys2D k player bsp =
+let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
     match k with
-      | 'c' -> printf "Affichage des  zones de collisions des segments\n"; flush stdout;
+      | 'j' -> printf "Affichage des  zones de collisions des segments\n"; flush stdout;
                set_color red ; Bsp.iter drawCollisionZone bsp ; set_color black
       | 'v' -> printf "Affiche des id de segment\n" ; flush stdout; set_text_size 20;
                set_color blue ; Bsp.iter printSegId bsp ; set_color black 
@@ -87,7 +87,7 @@ let debugKeys2D k player bsp =
       | 'r' -> printf "Reset map\n" ; flush stdout ; clear_graph () ; Render.display bsp player ; synchronize ()
       | 'p' -> printf "Les coordonnées du joueur sont %s avec un angle de %d\n" (Point.toString player.pos) player.pa ; flush stdout
       | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
-      | 'b' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
+      | ',' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
                else let seg = hardFromSome !followSeg in let pos = get_position player.pos seg in 
                     printf "Votre position par rapport a ce segment est %s\n" (tposToString pos) ; flush stdout
       | 'f' -> printf "Suivi d'un segment: %s " (followSegPrint !followSeg); flush stdout ; printf "pour changer le segment: k\n" ; flush stdout
@@ -110,9 +110,14 @@ let debugKeys2D k player bsp =
       | 'x' -> printf "Affichage de tout les segments a gauche du pivot\n"; flush stdout ;
                printf "Par rapport au pivot %s \n" (toString (getHead bsp)) ; flush stdout ;
                Bsp.iter (fun s -> printf "%s\n" (toString s); flush stdout) (Bsp.getLeft bsp)
+      | 'w' -> printf "Affichage de tout les segments a droite du pivot\n"; flush stdout ;
+               printf "Par rapport au pivot %s \n" (toString (getHead bsp)) ; flush stdout ;
+               Bsp.iter (fun s -> printf "%s\n" (toString s); flush stdout) (Bsp.getRight bsp)
       | 'l' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
                else let seg = hardFromSome !followSeg in let newbsp = Bsp.build_bspWithPivot seg (toList bsp) in 
                printf "Le BSP est update, le pivot est desormais %s\n" (toString seg) ; flush stdout ; Bsp.updateBsp newbsp ; clear_graph ()
+      | 'n' -> let sbsp = bspId bsp in printf "Affichage BSP\n" ; flush stdout ; printf "%s\n" (Bsp.print_tree bsp 0) ; flush stdout
+
       | _ -> raise NotAnAction ;;
                 
 

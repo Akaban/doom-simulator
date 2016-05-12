@@ -24,6 +24,7 @@ let fill_ceiling color h =
 
 (*crée les intructions mais attends un unit de plus pour les executer*)
 let pendingDrawSegment seg color () =
+  if Array.length seg <> 4 then () else
   set_color color; 
   draw_segments seg;
   revert_color ()
@@ -54,6 +55,7 @@ let rotateSegment rs p tupleRef =
       (*rs := new_segmentSimple (truncate xo) (truncate yo) (truncate xd) (truncate yd)*)
 
 let parseFunction3d p contour fill maxZf drawList s =
+  let ci0,ce1 = s.ci=0.,s.ce=1. in
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
@@ -105,10 +107,10 @@ let parseFunction3d p contour fill maxZf drawList s =
     if contour then begin
       let c=Options.contour_color in 
       let contours = List.map (fun s -> pendingDrawSegment s c)
-      [[|nyo, zco, nyo, zfo|];
-      [|nyo, zfo, nyd, zfd|];
+      [(if ci0 then [|nyo, zco, nyo, zfo|] else [||]) (*on n'affiche ce segment que si ci=0, evite les doublons du au split*)
+      ;[|nyo, zfo, nyd, zfd|];
       [|nyo, zco, nyd, zcd|];
-      [|nyd, zfd, nyd, zcd|]] in
+      (if ce1 then [|nyd, zfd, nyd, zcd|] else [||])] in
       drawList := List.rev_append contours !drawList
       end 
     with NePasTraiter -> ()
@@ -146,7 +148,7 @@ let display bsp p runData =
                     if !Options.debug then begin (*séparateur pour y voir plus clair dans le debug*)
                       Printf.printf "\n_____________________________________________________________\n" ; flush stdout end ;
                     if Options.minimap then begin
-                    set_color white ; Bsp.rev_parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
+                    set_color green ; Bsp.rev_parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
                     fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; 
                     drawSegment p.lAngleMinimap ; drawSegment p.rAngleMinimap;
                     revert_color ()

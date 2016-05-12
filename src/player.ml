@@ -97,7 +97,7 @@ let move d p bsp =
                 | None -> p.oldpos <- p.pos ; p.pos <- new_pos
             end
   | ThreeD -> let dx, dy =
-                match d with
+                match d with 
                   | MLeft -> 0. , !step_dist
                   | MRight -> 0. , -.(!step_dist)
                   | MBwd -> -.(!step_dist), 0.
@@ -108,5 +108,3 @@ let move d p bsp =
                   | None -> p.pos <- new_pos ; 
                   let lMinimap, rMinimap = calculateAngleMinimap new_pos p.pa in
                   p.rAngleMinimap <- lMinimap ; p.lAngleMinimap <- rMinimap
-                 
-              
