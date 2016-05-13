@@ -5,6 +5,8 @@ open Point
 open Colors
 open Debug
 
+exception NoFileOpened
+
 let newRunData initPosX initPosY initAngle =
   { labInitPos=new_point initPosX initPosY; labInitAngle=initAngle;
    playerInfo=false}
@@ -18,11 +20,11 @@ let keyToDir = function
 
 
 let actions k player bsp runData = match k with
-  | 'e' -> rotate Right player
-  | 'a' -> rotate Left player
+  | 'e' -> rotate 10 Right player
+  | 'a' -> rotate 10 Left player
   | 'c' -> crouchPlayer player
   | 'b' -> rushPlayer player
-  | ' ' -> Render.jumpAnimation bsp player runData
+  | ' ' -> raise NotAnAction (*Render.jumpAnimation bsp player runData*)
   | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp
   | '\027' (*echap*) -> raise Exit
   | _ -> Debug.debugKeys k player bsp runData
@@ -34,10 +36,16 @@ let mouseDirection (x1,y1) (x2,y2) =
      if ovSx <= -mouse_sensitivity then Some Left
      else None
 
+let readLab () = match maze with
+  | true -> let m = Maze.getMazeSegments (win_w/10) maze_size maze_intensity in 300,40,90,m   
+  | _ -> match cin with None -> raise NoFileOpened | Some cin ->
+          let (px,py,pa),seglist = Parse_lab.read_lab cin in
+          let seglist2 = List.map (fun (xo,yo,xd,yd) -> Segment.new_segment xo yo xd yd) seglist in
+          px, py, pa, seglist2
+
 let () =
-  let (px,py,pa),seglist = Parse_lab.read_lab cin in
-  let seglist2 = List.map (fun (xo,yo,xd,yd) -> Segment.new_segment xo yo xd yd) seglist in
-  let bsp = Bsp.build_bsp seglist2 in
+  let px,py,pa,seglist = readLab () in
+  let bsp = Bsp.build_bsp seglist in
   let player = Player.new_player (Point.new_point px py) pa in
   let runningData = newRunData px py pa in
   Bsp.instanceBsp := bsp ;flush stdout;
@@ -57,8 +65,8 @@ let () =
           else if ev.button then ()
           else let dirAngle = mouseDirection (mx, my) ((ev.mouse_x), (ev.mouse_y)) in
             match dirAngle with
-                | Some Right -> rotate Right player
-                | Some Left  -> rotate Left player 
+                | Some Right -> rotate Options.angular_change Right player
+                | Some Left  -> rotate Options.angular_change Left player 
                 | None -> raise NotAnAction end;
                Render.display !Bsp.instanceBsp player runningData;
                synchronize ();

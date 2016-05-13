@@ -60,7 +60,7 @@ let parseFunction3d p contour fill maxZf drawList s =
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
     let xo,yo,xd,yd = !tupleRef in 
-    if  xo <= 1. && xd <= 1.  then raise NePasTraiter (*on clippe le segment*)
+    if  xo <= 1. && xd <= 1. || xo >= xmax  then raise NePasTraiter (*on clippe le segment*)
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
@@ -132,7 +132,15 @@ let rec findCeilingHeight ypos = let range=ceilingMultiplicatorRange in
 
 let display bsp p runData =
   let parseFunction2d = drawSegment in
-  let parseMiniMap = drawSegmentScale Options.scale in
+  let parseMiniMap p s =
+    let (xo,yo),(xd,yd) = Segment.real_coordInt s in
+    let decal=30*scale in
+    let distorigine = truncate (distance p (new_point xo yo)) in
+    if distorigine > minimap_xmax
+    then ()
+    (*on restreint la minimap à sizeMiniMap*)
+    else drawSegmentScale scale (new_segment (xo-p.x+decal) (yo-p.y) (xd-p.x+decal) (yd-p.y))
+  in
   let not_zero x = if x <= 1 then 1 else x in
         match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
@@ -149,9 +157,13 @@ let display bsp p runData =
                     if !Options.debug then begin (*séparateur pour y voir plus clair dans le debug*)
                       Printf.printf "\n_____________________________________________________________\n" ; flush stdout end ;
                     if Options.minimap then begin
-                    set_color green ; Bsp.rev_parse parseMiniMap bsp (p.pos); revert_color () ; set_color red ;
-                    fill_circle (p.pos.x / scale) (p.pos.y/scale) (not_zero (size2d/scale)) ; 
-                    drawSegment p.lAngleMinimap ; drawSegment p.rAngleMinimap;
+                    set_color green ; Bsp.rev_parse (parseMiniMap p.pos) bsp (p.pos); revert_color () ; set_color red ;
+                    fill_circle 0 0 (not_zero (size2d/scale)) ;
+                    begin let pos = new_point 30 0 in
+                    let l,r = translatePointWithAngle pos (sizeAngleMiniMap,0.) (p.pa-angleMiniMap),
+                              translatePointWithAngle pos (sizeAngleMiniMap,0.) (p.pa+angleMiniMap) in
+                    let sl,sr = new_segmentPointSimple pos l, new_segmentPointSimple pos r in  
+                    drawSegment sl ; drawSegment sr end ;
                     revert_color ()
                     end;
                     if runData.playerInfo then begin
@@ -162,21 +174,21 @@ let display bsp p runData =
                                    p.pos.x p.pos.y p.pa);
                       moveto cx cy ; revert_color () end
 
-
-let rec restart f arg =
-  try f arg with Unix.Unix_error(Unix.EINTR,_,_) -> restart f arg
-
-let fsleep (time: float) = let _ = restart (Unix.select [] [] []) time in ()
-
+(*On ne peut pas faire de sleep avec graphics,
+ * la fonction suivante ne peut donc pas fonctionner*)
+(*let fsleep = Thread.delay
+*
 let jumpAnimation bsp p runData =
   let origine,peak = !eye_h,!eye_h + jumpPeak in
   while !eye_h < peak do
-    fsleep (1./.jumpSpeed) ;
+    Unix.sleep (1) ;
     eye_h := !eye_h + 1;
     display bsp p runData
   done;
   while !eye_h > origine do
-    fsleep (1./.gravity) ;
+    Unix.sleep (1) ;
     eye_h := !eye_h - 1;
     display bsp p runData done;;                   
+*)
 
+let jumpAnimation bsp p runData = failwith "Not implemented"

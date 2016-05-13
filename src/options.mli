@@ -8,10 +8,14 @@ type runningData =
 
 val mode : tmode
 
-val cin : in_channel
+val cin : in_channel option 
 
 val win_w : int
 val win_h : int
+
+val maze : bool
+val maze_size : int
+val maze_intensity : int
 
 val ceiling_h : int
 val floor_h : int
@@ -40,6 +44,7 @@ val angular_change : int
 
 val max_dist : float
 
+
 val step_dist : float ref
 val step_dist_debout : float
 val step_dist_accroupi : float
@@ -51,7 +56,7 @@ val jumpPeak : int
 
 val size2d : int
 
-val wall_collision_size : float
+val wall_collision_size : float ref
 
 val angleMiniMap : int
 val sizeAngleMiniMap : float
@@ -61,7 +66,8 @@ val xmax : float
 
 val scale : int
 val minimap : bool
- 
+val minimap_xmax : int 
+
 val debug_manualRender : bool ref
 
 val debug : bool ref

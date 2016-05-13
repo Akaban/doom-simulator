@@ -34,11 +34,11 @@ let mymod n m =
   if n >=0 then n mod m
   else m - (-n mod m)
 
-let rotate d p = match d with
-  | Left -> p.pa <- mymod (p.pa + angular_change) 360 ;
+let rotate i d p = match d with
+  | Left -> p.pa <- mymod (p.pa + i) 360 ;
             let lMinimap, rMinimap = calculateAngleMinimap p.pos p.pa in 
             p.rAngleMinimap <- lMinimap; p.lAngleMinimap <- rMinimap 
-  | Right -> p.pa <- mymod (p.pa - angular_change) 360 ;
+  | Right -> p.pa <- mymod (p.pa - i) 360 ;
              let lMinimap, rMinimap = calculateAngleMinimap p.pos p.pa in 
              p.rAngleMinimap <- lMinimap; p.lAngleMinimap <- rMinimap 
  

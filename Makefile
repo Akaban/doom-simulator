@@ -12,7 +12,7 @@ PACKAGES = # sdl
 COMPILE = $(OCAMLFIND) $(OCAMLC) # -package $(PACKAGES)
 COMPILEOPT = $(OCAMLFIND) $(OCAMLOPT) # -package $(PACKAGES)
 
-LIBS = str.cma graphics.cma unix.cma
+LIBS = str.cma graphics.cma
 # bigarray.cma sdl.cma
 LIBOPTS = $(LIBS:.cma=.cmxa)
 
@@ -20,7 +20,7 @@ EXEC = bsp
 
 OBJS = 	$(addprefix $(SRCDIR)/, colors.cmo music.cmo images.cmo trigo.cmo point.cmo options.cmo \
 	segment.cmo bsp.cmo physic.cmo \
-	player.cmo parse_lab.cmo render.cmo debug.cmo main.cmo)
+	player.cmo parse_lab.cmo maze.cmo render.cmo debug.cmo main.cmo)
 
 OPTOBJS = $(OBJS:.cmo=.cmx)
 FILESMLI = $(OBJS:.cmo=.mli)

@@ -74,8 +74,8 @@ let sgn x = if x < 0 then -1 else 1
  * on définit également le sens du segment *)
 let new_segmentPoint p1 p2 = let idc = !idCount () in
                              let angle1 = truncate (angleWithPoint p1 p2) in
-                             let angle = 180 - angle1 mod 90 in
-                             let sizeCol = (Options.wall_collision_size,0.) in
+                             let angle = if angle1 = 0 then 90 else 180 - angle1 mod 90 in
+                             let sizeCol = (!Options.wall_collision_size,0.) in
                              let bottomRight = translatePoint p1 (translateVect sizeCol angle)
                              in let bottomLeft = translatePoint p1 (translateVect sizeCol (angle+180)) in
                              let topRight = translatePoint p2 (translateVect sizeCol angle) in

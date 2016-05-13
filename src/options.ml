@@ -28,10 +28,14 @@ let fov = ref 60
 let step_dist = ref 10
 
 let xmin = ref 1
-let xmax = 9000.
+let xmax = ref 5000
 
 let scale = ref 5
 let minimap = ref false
+
+let maze = ref false
+let maze_size = ref 1000
+let maze_intensity = ref 8
 
 let debug = ref false
 let debug_bsp = ref false
@@ -53,21 +57,30 @@ let specs =
     "-xmin", Arg.Set_int xmin, " set minimum distance of display";
     "-debug", Arg.Set debug, " debugging 2D rendering";
     "-debugbsp", Arg.Set debug_bsp, " debugging bsp";
+    "-maze", Arg.Set maze, "generate random maze";
+    "-mazesize", Arg.Set_int maze_size, "set size of maze";
+    "-mazeintensity", Arg.Set_int maze_intensity, "set intensity of maze";
+    "-xmax", Arg.Set_int xmax, "set maximum distance of display";
   ]
 
 let alspecs = Arg.align specs
 
-let cin =
-  let ofile = ref None in
-  let set_file s =
+let set_file ofile labext s =
     if Filename.check_suffix s ".lab" then ofile := Some s
-    else raise (Arg.Bad "no .lab extension");
-  in
-  Arg.parse alspecs set_file usage;
+    else labext := false
+
+let cin = 
+  let ofile, labext = ref None, ref true in 
+  Arg.parse alspecs (set_file ofile labext) usage;
+  if !maze then None else
   match !ofile with 
-    | Some f -> file := f ; open_in f
+    | Some f -> if !labext then (file := f ; Some (open_in f)) else raise (Arg.Bad "No .lab extension")
     | None -> raise (Arg.Bad "no file provided")
 
+
+let maze = !maze
+let maze_size = !maze_size
+let maze_intensity = !maze_intensity
 
 let file = !file
 
@@ -78,6 +91,8 @@ let mouse_sensitivity = !mouse_sensitivity
 let angular_change = !angularChange
 
 let max_dist = float !max_dist
+
+let xmax = float !xmax
 
 let xmin = float !xmin
 
@@ -92,7 +107,9 @@ let mode = !mode
 
 let size2d = !size2d
 
-let wall_collision_size = float !step_dist *. 1.5
+let wc_size = float !step_dist *. 1.5
+let wc_maze_size = float !step_dist /. 8.
+let wall_collision_size = ref wc_size
 
 let angleMiniMap = 23
 let sizeAngleMiniMap = float !step_dist
@@ -129,6 +146,7 @@ let jumpSpeed = 7. (*chaque seconde prends jumpSpeed de hauteur jusqu'a jumpPeak
 
 let scale = !scale
 let minimap = !minimap
+let minimap_xmax = 400
 
 let debug_manualRender = ref false
 

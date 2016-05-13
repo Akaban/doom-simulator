@@ -14,7 +14,7 @@ val calculateAngleMinimap : Point.t -> int -> (Segment.t*Segment.t)
 
 type dir = Left | Right
 
-val rotate : dir -> t -> unit
+val rotate : int -> dir -> t -> unit
 
 val crouchPlayer : t -> unit
 val rushPlayer : t -> unit

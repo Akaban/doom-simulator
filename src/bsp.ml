@@ -67,6 +67,10 @@ let rec build_bsp = function
     | l -> let (s, ll, lr, _) = equilibrage l in
             N (s, build_bsp ll, build_bsp lr)
 
+let rec build_bsp = function
+  | [] -> E
+  | (l::ls) -> let left, right = Segment.split l ls in N(l,build_bsp left,build_bsp right)
+
 let elem x = List.exists ((=) x)
 
 let print_node s depth =

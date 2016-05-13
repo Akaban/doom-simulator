@@ -88,7 +88,7 @@ let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
                set_color blue ; Bsp.iter printSegId bsp ; set_color black 
       | 'g' -> printf "Affichage de tout les segments dispo\n";flush stdout ;
                Bsp.iter (fun s -> printf "%s\n" (toString s) ; flush stdout) bsp
-      | 'r' -> printf "Reset map\n" ; flush stdout ; clear_graph () ; Render.display bsp player ; synchronize ()
+      | ':' -> printf "Reset map\n" ; flush stdout ; clear_graph () ; Render.display bsp player ; synchronize ()
       | 'p' -> printf "Les coordonnées du joueur sont %s avec un angle de %d\n" (Point.toString player.pos) player.pa ; flush stdout
       | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
       | ',' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
