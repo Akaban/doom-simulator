@@ -39,7 +39,7 @@ let mouseDirection (x1,y1) (x2,y2) =
      else None
 
 let readLab () = match maze with
-  | true -> let m = Maze.getMazeSegments (win_w/10) maze_size maze_intensity in 300,40,90,m   
+  | true -> let m = Maze.getMazeSegments maze_size maze_intensity (win_h/10) in 300,40,90,m   
   | _ -> match cin with None -> raise NoFileOpened | Some cin ->
           let (px,py,pa),seglist = Parse_lab.read_lab cin in
           let seglist2 = List.map (fun (xo,yo,xd,yd) -> Segment.new_segment xo yo xd yd) seglist in
