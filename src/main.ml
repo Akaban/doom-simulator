@@ -1,3 +1,4 @@
+open Printf
 open Options
 open Graphics
 open Player
@@ -24,6 +25,7 @@ let actions k player bsp runData = match k with
   | 'a' -> rotate 10 Left player
   | 'c' -> crouchPlayer player
   | 'b' -> rushPlayer player
+  | 'u' -> Debug.draw2D bsp scale
   | ' ' -> raise NotAnAction (*Render.jumpAnimation bsp player runData*)
   | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp
   | '\027' (*echap*) -> raise Exit
@@ -61,7 +63,7 @@ let () =
            if ev.keypressed then
              match keyToDir ev.key with
                   | Some m -> move m player !Bsp.instanceBsp 
-                  | _ -> actions ev.key player !Bsp.instanceBsp runningData
+                  | _ -> printf "Key typed: %c\n" ev.key ;flush stdout; actions ev.key player !Bsp.instanceBsp runningData
           else if ev.button then ()
           else let dirAngle = mouseDirection (mx, my) ((ev.mouse_x), (ev.mouse_y)) in
             match dirAngle with

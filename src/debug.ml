@@ -12,6 +12,11 @@ let drawSegment s =
   let (xo,yo),(xd,yd) = real_coord s in
   Graphics.draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
 
+let rec draw2D bsp scale = if scale=0 then ()
+                     else begin clear_graph () ; Bsp.iter (Render.drawSegmentScale scale) bsp ; synchronize ();
+                     match (read_key ()) with 'i' -> draw2D bsp (scale+1) | _ -> ()
+                     end
+
 let drawCollisionZone s =
   if s.segBottom = None then () 
   else let getSome = fromSome s in

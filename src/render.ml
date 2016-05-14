@@ -60,7 +60,7 @@ let parseFunction3d p contour fill maxZf drawList s =
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
     let xo,yo,xd,yd = !tupleRef in 
-    if  xo <= 1. && xd <= 1. || xo >= xmax  then raise NePasTraiter (*on clippe le segment*)
+    if  xo <= 1. && xd <= 1.   then raise NePasTraiter (*on clippe le segment*)
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
