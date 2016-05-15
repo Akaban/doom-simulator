@@ -18,7 +18,7 @@ let rec draw2D bsp p scale = if scale=0 then ()
                      else begin clear_graph () ; Bsp.iter (Render.drawSegmentScale scale) bsp ;
                      set_color red; begin let sp = divPoint p scale in 
                      fill_circle sp.x sp.y (not_zero (size2d)) end ; 
-                     revert_color () ; synchronize ();  match (read_key ()) with 'i' -> draw2D bsp p (scale+1) | _ -> ()
+                     revert_color () ; synchronize ();  match (read_key ()) with 'i' -> draw2D bsp p (scale+1) | _ -> clear_graph ()
                      end
 
 let drawCollisionZone s =

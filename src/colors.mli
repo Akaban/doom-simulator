@@ -6,3 +6,5 @@ val current : Graphics.color ref
 val previous : Graphics.color option ref
 val set_color : Graphics.color -> unit
 val revert_color : unit -> unit
+
+val color_of_int : int -> Graphics.color

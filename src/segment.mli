@@ -10,8 +10,11 @@ type t = {
   segRight : t option;
   segTop : t option;
   segLeft : t option;
-  sens : tpos
+  sens : tpos;
+  couleur : Graphics.color option
 }
+
+val updateColor : t -> Graphics.color -> t
 
 val resetIdCount : unit -> unit
 

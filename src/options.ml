@@ -41,6 +41,10 @@ let maze_intensity = ref 200
 let debug = ref false
 let debug_bsp = ref false
 
+let minimap_xmax = ref 400
+
+let rainbow = ref false
+
 let set_mode = function
   | "2D" -> mode := TwoD
   | "3D" -> mode := ThreeD
@@ -58,11 +62,13 @@ let specs =
     "-xmin", Arg.Set_int xmin, " set minimum distance of display";
     "-debug", Arg.Set debug, " debugging 2D rendering";
     "-debugbsp", Arg.Set debug_bsp, " debugging bsp";
-    "-maze", Arg.Set maze, "generate random maze";
-    "-mazesize", Arg.Set_int maze_size, "set size of maze";
-    "-mazewidth", Arg.Set_int maze_intensity, "set width of maze";
-    "-xmax", Arg.Set_int xmax, "set maximum distance of display";
-  ]
+    "-maze", Arg.Set maze, " generate random maze";
+    "-mazesize", Arg.Set_int maze_size, " set size of maze";
+    "-mazewidth", Arg.Set_int maze_intensity, " set width of maze's walls";
+    "-xmax", Arg.Set_int xmax, " set maximum distance of display";
+    "-rainbow", Arg.Set rainbow, " set rainbow colors to walls";
+    "-minimap_xmax", Arg.Set_int minimap_xmax, " set maximum distance of display in minimap";
+   ]
 
 let alspecs = Arg.align specs
 
@@ -83,6 +89,9 @@ let maze = !maze
 let maze_size = !maze_size
 let maze_width = !maze_intensity
 
+
+let rainbow = !rainbow
+
 let file = !file
 
 let win_w = !win_w
@@ -100,7 +109,7 @@ let xmin = float !xmin
 let ceiling_h = win_h / 3
 let floor_h = 0
 let wall_h = ceiling_h - floor_h
-let eye_h_debout = wall_h - wall_h/3
+let eye_h_debout = wall_h - wall_h/2
 let eye_h_accroupi = eye_h_debout / 2
 let eye_h = ref eye_h_debout
 
@@ -125,6 +134,7 @@ let ceilingMultiplicator = 1. /. 300.
 let ceilingMultiplicator2 = 1. /. 1000.
 
 let bg = Colors.grey
+let minimap_color = Graphics.black
 let ceiling_color = Colors.bluesky
 let fill_color = Graphics.white
 let contour_color = Graphics.black
@@ -147,7 +157,7 @@ let jumpSpeed = 7. (*chaque seconde prends jumpSpeed de hauteur jusqu'a jumpPeak
 
 let scale = !scale
 let minimap = !minimap
-let minimap_xmax = 400
+let minimap_xmax = !minimap_xmax
 
 let debug_manualRender = ref false
 

@@ -25,7 +25,7 @@ let actions k player bsp runData = match k with
   | 'a' -> rotate 10 Left player
   | 'c' -> crouchPlayer player
   | 'b' -> rushPlayer player
-  | 'u' -> Debug.draw2D bsp (translatePoint player.pos (new_point (win_h/10) (win_h/10))) scale
+  | 'u' -> Debug.draw2D bsp (translatePoint player.pos (new_point (-win_h/10) (-win_h/10))) scale
   | ' ' -> raise NotAnAction (*Render.jumpAnimation bsp player runData*)
   | 'r' -> tp (runData.labInitPos.x,runData.labInitPos.y,runData.labInitAngle) player bsp
   | '\027' (*echap*) -> raise Exit
@@ -46,7 +46,9 @@ let readLab () = match maze with
           px, py, -1 ,-1, pa, seglist2
 
 let () =
+  let () = Random.self_init () in
   let px,py,pxe,pye,pa,seglist = readLab () in
+  let seglist = if rainbow then List.mapi (fun cpt x -> Segment.updateColor x (color_of_int (cpt + Random.int 7))) seglist else seglist in
   let bsp = Bsp.build_bsp seglist in
   let player = Player.new_player (Point.new_point px py) pa in
   let runningData = newRunData px py pa pxe pye in

@@ -103,7 +103,7 @@ let parseFunction3d p contour fill maxZf drawList s =
     let () = rotateSegment segment p tupleRef ; clipSegment segment p in
     let nyo, zco, zfo, nyd, zcd, zfd = projectionSegment s in
     if fill then drawList := pendingFillPoly 
-          [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|] Options.fill_color :: !drawList;
+          [|nyo,zco; nyo, zfo ; nyd, zfd; nyd, zcd|] (fromSome Options.fill_color s.couleur) :: !drawList;
     if contour then begin
       let c=Options.contour_color in 
       let contours = List.map (fun s -> pendingDrawSegment s c)
@@ -157,7 +157,7 @@ let display bsp p runData =
                     if !Options.debug then begin (*séparateur pour y voir plus clair dans le debug*)
                       Printf.printf "\n_____________________________________________________________\n" ; flush stdout end ;
                     if Options.minimap then begin
-                    set_color green ; Bsp.rev_parse (parseMiniMap p.pos) bsp (p.pos); revert_color () ; set_color red ;
+                    set_color Options.minimap_color ; Bsp.rev_parse (parseMiniMap p.pos) bsp (p.pos); revert_color () ; set_color red ;
                     fill_circle 0 0 (not_zero (size2d/scale)) ;
                     begin let pos = new_point 30 0 in
                     let l,r = translatePointWithAngle pos (sizeAngleMiniMap,0.) (p.pa-angleMiniMap),

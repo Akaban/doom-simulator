@@ -11,8 +11,11 @@ type t = { id : int ;
           segRight : t option;
           segTop : t option;
           segLeft : t option;
-          sens : tpos
+          sens : tpos;
+          couleur : Graphics.color option;
          }
+
+let updateColor s c = {s with couleur=Some c}
 
 let compteur x = let cpt = ref x in fun () -> cpt := !cpt + 1 ; !cpt;;
 let idCount = ref (compteur 0);;
@@ -64,7 +67,7 @@ let to_f = float_of_int
 let to_i = int_of_float
 
 let new_segmentPointSimple p1 p2 = { id=(-1) ; porig=p1 ; pdest=p2 ; ci = 0.0 ; ce = 1.0 ; segBottom = None
-                            ; segRight = None ; segTop = None ; segLeft = None; sens=C}
+                            ; segRight = None ; segTop = None ; segLeft = None; sens=C;couleur=None}
 
 let sgn x = if x < 0 then -1 else 1
 
@@ -84,7 +87,7 @@ let new_segmentPoint p1 p2 = let idc = !idCount () in
                                 segBottom = Some (new_segmentPointSimple bottomLeft bottomRight);
                                 segLeft = Some (new_segmentPointSimple bottomLeft topLeft);
                                 segTop = Some (new_segmentPointSimple topLeft topRight);
-                                segRight = Some (new_segmentPointSimple bottomRight topRight) ; sens=C }
+                                segRight = Some (new_segmentPointSimple bottomRight topRight) ; sens=C;couleur=None }
                              in { s with sens=sens s}
 
 
@@ -178,8 +181,8 @@ let split_segment d s fid =
                 let (s2xo,s2yo),(s2xd,s2yd) = real_coordInt s2 in
                 let ts1 = new_segment s1xo s1yo s1xd s1yd (*on utilise new_segment pour calculer les deux nouvelles zones*)
                 in let ts2 = new_segment s2xo s2yo s2xd s2yd (*de collision que l'on obtient*)
-                in let (rs1,rs2) = { ts1 with ce=p ; id=ts1.id ; porig=s1.porig ; pdest = s1.pdest}, { ts2 with ci=p ; id=ts2.id ;
-                   porig=s2.porig; pdest=s2.pdest}
+                in let (rs1,rs2) = { ts1 with ce=p ; id=ts1.id ; porig=s1.porig ; pdest = s1.pdest;couleur=s1.couleur}, { ts2 with ci=p ; id=ts2.id ;
+                   porig=s2.porig; pdest=s2.pdest;couleur=s2.couleur}
                 in begin match (get_position s.porig d) with
                          | L -> (Some rs1,Some rs2)
                          | _ -> (Some rs2,Some rs1)

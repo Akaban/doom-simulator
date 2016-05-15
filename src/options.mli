@@ -33,6 +33,8 @@ val ceilingMultiplicatorRange : int
 val ceilingMultiplicator : float
 val ceilingMultiplicator2 : float
 
+val rainbow : bool
+val minimap_color : Graphics.color
 val bg : Graphics.color
 val ceiling_color : Graphics.color
 val fill_color : Graphics.color
