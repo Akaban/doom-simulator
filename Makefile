@@ -16,9 +16,9 @@ LIBS = str.cma graphics.cma
 # bigarray.cma sdl.cma
 LIBOPTS = $(LIBS:.cma=.cmxa)
 
-EXEC = bsp
+EXEC = projet_pfa
 
-OBJS = 	$(addprefix $(SRCDIR)/, colors.cmo music.cmo images.cmo trigo.cmo point.cmo options.cmo \
+OBJS = 	$(addprefix $(SRCDIR)/, colors.cmo trigo.cmo point.cmo options.cmo \
 	segment.cmo bsp.cmo physic.cmo \
 	player.cmo parse_lab.cmo maze.cmo render.cmo debug.cmo main.cmo)
 

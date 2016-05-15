@@ -25,14 +25,14 @@ let win_h = ref 800
 let mouse_sensitivity = ref 1
 let angularChange = ref 1
 
-let max_dist = ref 20000
+let max_dist = ref 8000
 
 let fov = ref 60
 
 let step_dist = ref 10
 
 let xmin = ref 1
-let xmax = ref 5000
+let xmax = ref 10000
 
 let scale = ref 5
 let minimap = ref false

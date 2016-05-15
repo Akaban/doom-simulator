@@ -52,19 +52,16 @@ let rotateSegment rs p tupleRef =
       let yo = (oyo -. py) *. dcos (-p.pa) +. (oxo -. px) *. dsin (-p.pa) in
       let xd = (oxd -. px) *. dcos (-p.pa) -. (oyd -. py) *. dsin (-p.pa) in
       let yd = (oyd -. py) *. dcos (-p.pa) +. (oxd -. px) *. dsin (-p.pa) in
-      (*let pox, poy = translateVectFloat (oxo-.px,oyo-.py) (-p.pa) in
-      let pdx, pdy =  translateVectFloat (oxd-.px,oyd-.py) (-p.pa) in*)
-      tupleRef := xo, yo, xd, yd
-      (*rs := new_segmentSimple (truncate xo) (truncate yo) (truncate xd) (truncate yd)*)
+      tupleRef := xo, yo, xd, yd 
 
 let parseFunction3d p contour fill drawList s =
   let ci0,ce1 = s.ci=0.,s.ce=1. in
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
-    let distance = distance (new_point 0 0) (new_point (truncate xo) (truncate yo)) in 
+    let distance = distance p.pos (new_point (truncate xo) (truncate yo)) in 
     let xo,yo,xd,yd = !tupleRef in 
-    if  xo <= 1. && xd <= 1. || distance > xmax then raise NePasTraiter (*on clippe le segment*)
+    if  xo <= 1. && xd <= 1. || distance > xmax  then raise NePasTraiter (*on clippe le segment*)
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd
