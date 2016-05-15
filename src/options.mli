@@ -3,7 +3,8 @@ type tmode = TwoD | ThreeD
 type runningData =
   { labInitPos : Point.t ;
     labInitAngle : int;
-    mutable playerInfo : bool
+    mutable playerInfo : bool;
+    mazeEndpos : Point.t
   }
 
 val mode : tmode
@@ -15,7 +16,7 @@ val win_h : int
 
 val maze : bool
 val maze_size : int
-val maze_intensity : int
+val maze_width : int
 
 val ceiling_h : int
 val floor_h : int

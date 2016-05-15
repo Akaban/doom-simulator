@@ -5,7 +5,8 @@ type tmode = TwoD | ThreeD
 type runningData =
   { labInitPos : Point.t ;
     labInitAngle : int ;
-    mutable playerInfo : bool
+    mutable playerInfo : bool;
+    mazeEndpos : Point.t
   }
 
 let usage = "usage: ./bsp file.lab"
@@ -34,8 +35,8 @@ let scale = ref 5
 let minimap = ref false
 
 let maze = ref false
-let maze_size = ref 1000
-let maze_intensity = ref 8
+let maze_size = ref 10
+let maze_intensity = ref 200
 
 let debug = ref false
 let debug_bsp = ref false
@@ -59,7 +60,7 @@ let specs =
     "-debugbsp", Arg.Set debug_bsp, " debugging bsp";
     "-maze", Arg.Set maze, "generate random maze";
     "-mazesize", Arg.Set_int maze_size, "set size of maze";
-    "-mazeintensity", Arg.Set_int maze_intensity, "set intensity of maze";
+    "-mazewidth", Arg.Set_int maze_intensity, "set width of maze";
     "-xmax", Arg.Set_int xmax, "set maximum distance of display";
   ]
 
@@ -80,7 +81,7 @@ let cin =
 
 let maze = !maze
 let maze_size = !maze_size
-let maze_intensity = !maze_intensity
+let maze_width = !maze_intensity
 
 let file = !file
 

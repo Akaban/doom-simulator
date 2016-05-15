@@ -5,6 +5,7 @@ open Printf
 open Player
 open Bsp
 open Options
+open Colors
 
 exception NotAnAction
 
@@ -12,9 +13,12 @@ let drawSegment s =
   let (xo,yo),(xd,yd) = real_coord s in
   Graphics.draw_segments [|(truncate xo,truncate yo,truncate xd,truncate yd)|]
 
-let rec draw2D bsp scale = if scale=0 then ()
-                     else begin clear_graph () ; Bsp.iter (Render.drawSegmentScale scale) bsp ; synchronize ();
-                     match (read_key ()) with 'i' -> draw2D bsp (scale+1) | _ -> ()
+let not_zero x = if x=0 then 1 else x
+let rec draw2D bsp p scale = if scale=0 then ()
+                     else begin clear_graph () ; Bsp.iter (Render.drawSegmentScale scale) bsp ;
+                     set_color red; begin let sp = divPoint p scale in 
+                     fill_circle sp.x sp.y (not_zero (size2d)) end ; 
+                     revert_color () ; synchronize ();  match (read_key ()) with 'i' -> draw2D bsp p (scale+1) | _ -> ()
                      end
 
 let drawCollisionZone s =
@@ -79,6 +83,7 @@ let debugKeys3D k player bsp runData =
              Options.draw_contour := (not !Options.draw_contour)
     | 'f' -> printf "Afficher murs\n"; flush stdout;
              Options.fill_wall := (not !Options.fill_wall)
+    | 'o' -> Options.collision := not !Options.collision ; if !Options.collision then printf "Collision enabled\n" else printf "collision disabled\n" ; flush stdout 
     | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
     | 'p' -> pauseGame 'p'
     | 'i' -> runData.playerInfo <- not runData.playerInfo ; if runData.playerInfo then printf "Option %s activated\n" "info-joueur"
