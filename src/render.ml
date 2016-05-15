@@ -62,8 +62,9 @@ let parseFunction3d p contour fill drawList s =
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
   let clipSegment rs p =
+    let distance = distance (new_point 0 0) (new_point (truncate xo) (truncate yo)) in 
     let xo,yo,xd,yd = !tupleRef in 
-    if  xo <= 1. && xd <= 1.   then raise NePasTraiter (*on clippe le segment*)
+    if  xo <= 1. && xd <= 1. || distance > xmax then raise NePasTraiter (*on clippe le segment*)
     else if xo <= 1. then tupleRef := 1., 
           (yo +. (1. -. xo) *. (tangleTuple !tupleRef)),
           xd ,yd

@@ -10,8 +10,6 @@ type t = {
   mutable pos : Point.t;
   mutable pa : int;
   mutable oldpos : Point.t;
-  mutable rAngleMinimap : Segment.t;
-  mutable lAngleMinimap : Segment.t;
   mutable crouch : bool;
   mutable holdRush : bool (*mode maintient sprint*)
 }
@@ -24,12 +22,7 @@ let divPos = divPoint p scale in
 
 
 let new_player pos pa =
-  let rMinimap,lMinimap = calculateAngleMinimap pos pa in
-  { pos=pos;pa=pa;oldpos=pos;crouch=false;holdRush=false;
-    rAngleMinimap = rMinimap;
-    lAngleMinimap = lMinimap}
-                          
-                          
+  { pos=pos;pa=pa;oldpos=pos;crouch=false;holdRush=false}    
 
 type dir = Left | Right
 
@@ -38,12 +31,8 @@ let mymod n m =
   else m - (-n mod m)
 
 let rotate i d p = match d with
-  | Left -> p.pa <- mymod (p.pa + i) 360 ;
-            let lMinimap, rMinimap = calculateAngleMinimap p.pos p.pa in 
-            p.rAngleMinimap <- lMinimap; p.lAngleMinimap <- rMinimap 
-  | Right -> p.pa <- mymod (p.pa - i) 360 ;
-             let lMinimap, rMinimap = calculateAngleMinimap p.pos p.pa in 
-             p.rAngleMinimap <- lMinimap; p.lAngleMinimap <- rMinimap 
+  | Left -> p.pa <- mymod (p.pa + i) 360 
+  | Right -> p.pa <- mymod (p.pa - i) 360
  
 let rec crouchPlayer p =
   if p.crouch then begin
@@ -73,8 +62,6 @@ let tp (tpx,tpy,tpa) p bsp = match mode with
                                 (toString s) ; flush stdout
                     | None -> p.pos <- npos  ; p.pa <- tpa
               end ;
-                    let lMinimap, rMinimap = calculateAngleMinimap npos p.pa in
-                    p.rAngleMinimap <- lMinimap ; p.lAngleMinimap <- rMinimap
               
 
   | _ -> ()
@@ -108,6 +95,4 @@ let move d p bsp =
                in let new_pos = translatePointWithAngle p.pos (dx,dy) p.pa
                in match (detect_collision new_pos bsp) with
                   | Some s -> ()
-                  | None -> p.pos <- new_pos ; 
-                  let lMinimap, rMinimap = calculateAngleMinimap new_pos p.pa in
-                  p.rAngleMinimap <- lMinimap ; p.lAngleMinimap <- rMinimap
+                  | None -> p.pos <- new_pos 

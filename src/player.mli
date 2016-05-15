@@ -2,8 +2,6 @@ type t = {
   mutable pos : Point.t;
   mutable pa : int;
   mutable oldpos : Point.t;
-  mutable rAngleMinimap : Segment.t;
-  mutable lAngleMinimap : Segment.t;
   mutable crouch : bool;
   mutable holdRush: bool
 }
