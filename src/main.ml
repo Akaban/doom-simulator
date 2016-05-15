@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 open Printf
 open Options
 open Graphics
@@ -38,6 +41,7 @@ let mouseDirection (x1,y1) (x2,y2) =
      if ovSx <= -mouse_sensitivity then Some Left
      else None
 
+(*fonction read_lab qui charge soit un labyrinthe aléatoire soit un fichier donné*)
 let readLab () = match maze with
   | true -> let m,(px,py),(pxe,pye) = Maze.getMazeSegments maze_size maze_width (win_h/10) in px,py,pxe,pye,90,m   
   | _ -> match cin with None -> raise NoFileOpened | Some cin ->
@@ -54,7 +58,7 @@ let () =
   let runningData = newRunData px py pa pxe pye in
   Bsp.instanceBsp := bsp ;flush stdout;
   let s = Printf.sprintf " %dx%d" win_w win_h in
-  open_graph s; set_window_title "Doom-Like Project 0.1";
+  open_graph s; set_window_title "Doom-Like Project 0.2 Abdelkader-Mahamat Djamal & Bryce Tichit";
        auto_synchronize false; Render.display bsp player runningData ; synchronize () ;
        try
          while true do

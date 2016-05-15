@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 type t = {x : int; y : int}
 
 let new_point x y = {x=x;y=y}

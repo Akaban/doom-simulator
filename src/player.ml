@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 open Options
 open Physic
 open Point
@@ -88,12 +91,12 @@ let move d p bsp =
             in let new_pos = new_point (p.pos.x + dx) (p.pos.y + dy)
             in begin match (detect_collision new_pos bsp) with
                 | Some s -> if !debug then begin
-                          let (Some segt) = s.segTop in
+                          match s.segTop with None -> () | Some segt -> begin 
                           print_string ("Collision detecte avec " ^ Segment.toString s ^ "\n"); 
                           flush stdout ; Printf.printf "Votre position par rapport au segTop est %s et par rapport au seg est %s\n" 
                           (Segment.get_position_s new_pos segt) (Segment.get_position_s new_pos s);
                           flush stdout
-                          end
+                          end end
                 | None -> p.oldpos <- p.pos ; p.pos <- new_pos
             end
   | ThreeD -> let dx, dy =

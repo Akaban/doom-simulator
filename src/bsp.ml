@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 open Segment
 open List
 
@@ -49,23 +52,6 @@ let rec iter f bsp = match bsp with
   | [] -> []
   | x::xs -> x :: deleteElement e xs 
 
-let delta_min (x, ll, lr) (s,l1,l2,min) =
-  let delta = abs (List.length ll - List.length lr) in
-  if delta < min then (x , ll, lr, delta)
-  else (s,l1,l2,min)
-
-let equilibrage ls = 
-let rec doEquilibrage sl acc =
-  match sl with
-  | [] -> acc
-  | x::xs -> let left,right = Segment.split x (List.filter ((!=) x) ls) in 
-      doEquilibrage xs (delta_min (x, left, right) acc)
-in match ls with x::_ -> doEquilibrage ls (x,[],[],80000) | _ -> assert false
-
-let rec build_bsp = function 
-    | []-> E
-    | l -> let (s, ll, lr, _) = equilibrage l in
-            N (s, build_bsp ll, build_bsp lr)
 
 let rec build_bsp = function
   | [] -> E

@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 open Point
 open Segment
 open Graphics
@@ -90,7 +93,7 @@ let debugKeys3D k player bsp runData =
             else printf "Option %s disabled\n" "info-joueur" ; flush stdout
     | _ -> raise NotAnAction
 
-let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
+let debugKeys2D k player bsp = 
     match k with
       | 'j' -> printf "Affichage des  zones de collisions des segments\n"; flush stdout;
                set_color red ; Bsp.iter drawCollisionZone bsp ; set_color black
@@ -98,7 +101,6 @@ let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
                set_color blue ; Bsp.iter printSegId bsp ; set_color black 
       | 'g' -> printf "Affichage de tout les segments dispo\n";flush stdout ;
                Bsp.iter (fun s -> printf "%s\n" (toString s) ; flush stdout) bsp
-      | ':' -> printf "Reset map\n" ; flush stdout ; clear_graph () ; Render.display bsp player ; synchronize ()
       | 'p' -> printf "Les coordonnées du joueur sont %s avec un angle de %d\n" (Point.toString player.pos) player.pa ; flush stdout
       | 'm' -> Options.debug := not !Options.debug ; if !Options.debug then printf "Option debug activated\n" else printf "Option debug disabled\n" ; flush stdout
       | ',' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
@@ -114,12 +116,6 @@ let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
                                                             followSeg := Some s
                                                 | None -> printf "Je regrette mais je n'ai pas trouve ce segment (%d)\n" id
                                          end ; flush stdout
-      | 't' -> if not (followSegBool !followSeg) then begin printf "Je regrette mais vous ne suivez aucun segment, pour changer de segment k\n" ; flush stdout end
-               else let seg = hardFromSome !followSeg in let (pTop,pRight,pBot,pLeft) =  (Physic.collisionPlayer player.pos seg) in 
-               if pTop = L && pRight = R && pBot = R && pLeft = L then printf "Il y a une collision avec le segment suivi\n" 
-               else printf "Il n'y a pas de collision avec le segment suivi\n" ; flush stdout;
-               printf "segTop=%s segRight=%s segBot=%s segLeft=%s\n" (tposToString pTop) (tposToString pRight)
-                               (tposToString pBot) (tposToString pLeft) ; flush stdout
       | 'o' -> Options.collision := not !Options.collision ; if !Options.collision then printf "Collision enabled\n" else printf "collision disabled\n" ; flush stdout 
       | 'x' -> printf "Affichage de tout les segments a gauche du pivot\n"; flush stdout ;
                printf "Par rapport au pivot %s \n" (toString (getHead bsp)) ; flush stdout ;
@@ -127,8 +123,6 @@ let debugKeys2D k player bsp = let sbsp = Bsp.bspId bsp in
       | 'w' -> printf "Affichage de tout les segments a droite du pivot\n"; flush stdout ;
                printf "Par rapport au pivot %s \n" (toString (getHead bsp)) ; flush stdout ;
                Bsp.iter (fun s -> printf "%s\n" (toString s); flush stdout) (Bsp.getRight bsp)
-      | 'n' -> let sbsp = bspId bsp in printf "Affichage BSP\n" ; flush stdout ; printf "%s\n" (Bsp.print_tree bsp 0) ; flush stdout
-
       | _ -> raise NotAnAction ;;
                 
 

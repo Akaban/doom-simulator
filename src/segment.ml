@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 open Point
 
 type tpos = L | R | C
@@ -187,7 +190,8 @@ let split_segment d s fid =
                          | L -> (Some rs1,Some rs2)
                          | _ -> (Some rs2,Some rs1)
                    end;;
-    
+   
+(* split avec la fonction d'id fid *)
 let splitId hd r fid =
   let rec split_do rest (l,r) = 
     match rest with

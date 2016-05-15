@@ -1,3 +1,6 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
 open Graphics
 open Segment
 open Trigo
@@ -54,7 +57,7 @@ let rotateSegment rs p tupleRef =
       tupleRef := xo, yo, xd, yd
       (*rs := new_segmentSimple (truncate xo) (truncate yo) (truncate xd) (truncate yd)*)
 
-let parseFunction3d p contour fill maxZf drawList s =
+let parseFunction3d p contour fill drawList s =
   let ci0,ce1 = s.ci=0.,s.ce=1. in
   let (xo,yo), (xd,yd) = Segment.real_coord s in
   let tupleRef = ref (xo,yo,xd,yd) in
@@ -88,8 +91,6 @@ let parseFunction3d p contour fill maxZf drawList s =
     else if nyd > win_h then win_h, zcd -. ((nyd -. win_h) *. du), zfd -. ((nyd -. win_h) *. dl)
     else nyd,zcd,zfd in
     let nyo, zco, zfo, nyd, zcd, zfd = truncate nyo, truncate zco, truncate zfo, truncate nyd, truncate zcd, truncate zfd in
-    if zfo > !maxZf then maxZf := zfo ; (*nécessaire pour coder la manière dont on veut representer le plafond*)
-    if zfd > !maxZf then maxZf := zfd ;
     if !Options.debug then begin
       Printf.printf "Segment nb %d, porig: (%d,%d) porigUp: (%d,%d) pdest: (%d,%d) pdestUp :(%d,%d)\n" s.id 
                 nyo zco nyo zfo nyd zfd nyd zcd; flush stdout; 
@@ -118,17 +119,6 @@ let parseFunction3d p contour fill maxZf drawList s =
 
 let truncate4tuple (x,y,z,t) = truncate x, truncate y, truncate z, truncate t 
 
-let rec findCeilingHeight ypos = let range=ceilingMultiplicatorRange in
-    function
-      | y when y <= range || y >= -(range) -> defaultCeilingh + 
-                            truncate (float_of_int (y-ypos) *. ceilingMultiplicator)
-      | y when y < -(range) -> let start,rest = findCeilingHeight ypos (-range),
-                                                y + range
-                               in truncate (float_of_int (rest-ypos) *. ceilingMultiplicator2) +
-                                  start
-      | y -> let start,rest = findCeilingHeight ypos range, y - range in
-                truncate (float_of_int (rest-ypos) *. ceilingMultiplicator2) + start
-
 
 let display bsp p runData =
   let parseFunction2d = drawSegment in
@@ -145,12 +135,11 @@ let display bsp p runData =
         match mode with
         | TwoD -> Bsp.parse parseFunction2d bsp (p.pos) ; set_color white ; fill_circle p.oldpos.x p.oldpos.y size2d ;
           set_color blue ; fill_circle p.pos.x p.pos.y size2d ; set_color black
-        | ThreeD ->  let maxZf = ref 0 in
-                     let drawList = ref [] in
+        | ThreeD ->  let drawList = ref [] in
                      let ceilh = defaultCeilingh in
                      clear_graph () ; fill_background Options.bg ; 
-                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall maxZf drawList) bsp (p.pos) ;
-                    fill_ceiling Options.ceiling_color (max !maxZf ceilh) ;
+                    Bsp.rev_parse (parseFunction3d p !Options.draw_contour !Options.fill_wall drawList) bsp (p.pos) ;
+                    fill_ceiling Options.ceiling_color ceilh ;
                     sequence (List.rev !drawList); (*on dessine le tout sachant 
                                                    que nos instructions sont à l'envers 
                                                    donc on renverse*)
@@ -159,7 +148,7 @@ let display bsp p runData =
                     if Options.minimap then begin
                     set_color Options.minimap_color ; Bsp.rev_parse (parseMiniMap p.pos) bsp (p.pos); revert_color () ; set_color red ;
                     fill_circle 0 0 (not_zero (size2d/scale)) ;
-                    begin let pos = new_point 30 0 in
+                    begin let pos = new_point 30 0 in (*sur la minimap c'est le labyrinthe qui se déplace et non le joueur*)
                     let l,r = translatePointWithAngle pos (sizeAngleMiniMap,0.) (p.pa-angleMiniMap),
                               translatePointWithAngle pos (sizeAngleMiniMap,0.) (p.pa+angleMiniMap) in
                     let sl,sr = new_segmentPointSimple pos l, new_segmentPointSimple pos r in  
@@ -181,12 +170,12 @@ let display bsp p runData =
 let jumpAnimation bsp p runData =
   let origine,peak = !eye_h,!eye_h + jumpPeak in
   while !eye_h < peak do
-    Unix.sleep (1) ;
+    Unix.fsleep (1/jumpSpeed) ;
     eye_h := !eye_h + 1;
     display bsp p runData
   done;
   while !eye_h > origine do
-    Unix.sleep (1) ;
+    Unix.fsleep (1/gravity) ;
     eye_h := !eye_h - 1;
     display bsp p runData done;;                   
 *)

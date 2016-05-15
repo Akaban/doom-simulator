@@ -1,3 +1,8 @@
+(* Projet PFA 2015-2016
+ * Université Paris Sud L3
+ * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
+(* Module Colors permettant d'étendre la partie
+ * Colors du module Graphics*)
 open Graphics
 
 let grey = rgb 160 160 160
