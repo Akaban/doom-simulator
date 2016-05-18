@@ -66,7 +66,12 @@ let tp (tpx,tpy,tpa) p bsp = match mode with
 
   | _ -> ()
 
-let move d p bsp = 
+
+let iterate n f a =
+  fun () -> List.iter (flip app ()) (replicate (fun a -> f a) n)
+
+let move d p bsp =
+  let doMove () =
   match mode with
   | TwoD -> let step = truncate !step_dist in
             let dx, dy = 
@@ -96,3 +101,13 @@ let move d p bsp =
                in match (detect_collision new_pos bsp) with
                   | Some s -> ()
                   | None -> p.pos <- new_pos 
+  in if !step_dist > step_dist_debout then (*division du déplacement si celui-ci est plus grand (mode sprint) pour éviter les bugs de collision*)
+      let howM = !step_dist /. step_dist_debout in
+      let fl,i = modf howM in
+      let sdist = !step_dist in
+      step_dist := step_dist_debout ;
+      for i=0 to ((truncate i) -1) do doMove () done ;
+      step_dist := fl ;
+      doMove() ;
+      step_dist := sdist
+  else doMove()
