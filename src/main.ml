@@ -37,7 +37,10 @@ let actions k player bsp runData = match k with
 let mouseDirection (x1,y1) (x2,y2) =
   let mouseSegment = Segment.new_segmentSimple x1 y1 x2 y2 in
   let (ovSx,_) = Segment.originVector mouseSegment
-  in if ovSx >= mouse_sensitivity then Some Right else
+  in if x1 < 0 then Some Left 
+     else if x1 > win_w then Some Right
+     else
+     if ovSx >= mouse_sensitivity then Some Right else
      if ovSx <= -mouse_sensitivity then Some Left
      else None
 

@@ -67,9 +67,6 @@ let tp (tpx,tpy,tpa) p bsp = match mode with
   | _ -> ()
 
 
-let iterate n f a =
-  fun () -> List.iter (flip app ()) (replicate (fun a -> f a) n)
-
 let move d p bsp =
   let doMove () =
   match mode with

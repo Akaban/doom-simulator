@@ -22,7 +22,7 @@ let size2d = ref 4
 let win_w = ref 800
 let win_h = ref 800
 
-let mouse_sensitivity = ref 1
+let mouse_sensitivity = ref 3
 let angularChange = ref 1
 
 let max_dist = ref 8000
