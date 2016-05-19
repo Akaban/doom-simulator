@@ -22,7 +22,7 @@ let size2d = ref 4
 let win_w = ref 800
 let win_h = ref 800
 
-let mouse_sensitivity = ref 3
+let mouse_sensitivity = ref 2
 let angularChange = ref 1
 
 let max_dist = ref 8000
@@ -121,7 +121,7 @@ let mode = !mode
 let size2d = !size2d
 
 let wc_size = float !step_dist *. 1.5
-let wc_maze_size = float !step_dist /. 8.
+let wc_maze_size = float !step_dist /. 10.
 let wall_collision_size = ref wc_size
 
 let angleMiniMap = 23

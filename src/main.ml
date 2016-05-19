@@ -24,8 +24,8 @@ let keyToDir = function
 
 
 let actions k player bsp runData = match k with
-  | 'e' -> rotate 10 Right player
-  | 'a' -> rotate 10 Left player
+  | 'e' -> rotate 1 Right player
+  | 'a' -> rotate 1 Left player
   | 'c' -> crouchPlayer player
   | 'b' -> rushPlayer player
   | 'u' -> Debug.draw2D bsp (translatePoint player.pos (new_point (-win_h/10) (-win_h/10))) scale
@@ -37,11 +37,8 @@ let actions k player bsp runData = match k with
 let mouseDirection (x1,y1) (x2,y2) =
   let mouseSegment = Segment.new_segmentSimple x1 y1 x2 y2 in
   let (ovSx,_) = Segment.originVector mouseSegment
-  in if x1 < 0 then Some Left 
-     else if x1 > win_w then Some Right
-     else
-     if ovSx >= mouse_sensitivity then Some Right else
-     if ovSx <= -mouse_sensitivity then Some Left
+  in if ovSx >= mouse_sensitivity then Some Left else
+     if ovSx <= -mouse_sensitivity then Some Right
      else None
 
 (*fonction read_lab qui charge soit un labyrinthe aléatoire soit un fichier donné*)

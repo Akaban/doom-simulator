@@ -9,8 +9,9 @@ let hardFromSome = function
     | None -> failwith "hardFromSome with None"
 
 
-let leftCollision = (R,L)
+(*let leftCollision = (R,L)*)
 let rightCollision = (L,R)
+let leftCollision = rightCollision
 (*La position des segments de collision est différente selon le sens de notre segment
  * il convient donc de distinguer celui-ci *)
 
