@@ -15,6 +15,8 @@ This program loads a labyrinth source, written with the following syntax
     P: Coordinates (x,y,z) of starting point in the map
     Coordinates of all the segments in the map, representing walls
 
+______
+
     P : 400 100 90
     300 0 300 300
     500 0 500 300
@@ -30,7 +32,19 @@ This program loads a labyrinth source, written with the following syntax
 
 We can now start the program with ./projet\_pfa source\_file.lab
 
-While in the game you can move using ZQSD (or WASD depending of the keyboard)
+While in the game you can move using ZQSD (WASD not supported)
+
+Example with lab1.lab in 2D:
+
+![](./media/lab12D.png)
+
+Example with lab1.lab in 3D:
+
+![](./media/lab13D.png)
+
+A funny rainbow maze:
+
+![](./media/rainbowmaze.png)
 
 ### Keys in game
 
