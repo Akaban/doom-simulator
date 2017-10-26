@@ -1,6 +1,6 @@
 (* Projet PFA 2015-2016
  * Université Paris Sud L3
- * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
+ * Par Bryce Tichit *)
 open Printf
 open Options
 open Graphics
@@ -58,7 +58,7 @@ let () =
   let runningData = newRunData px py pa pxe pye in
   Bsp.instanceBsp := bsp ;flush stdout;
   let s = Printf.sprintf " %dx%d" win_w win_h in
-  open_graph s; set_window_title "Doom-Like Project 0.2 Abdelkader-Mahamat Djamal & Bryce Tichit";
+  open_graph s; set_window_title "Doom-Like Project 0.2 Bryce Tichit";
        auto_synchronize false; Render.display bsp player runningData ; synchronize () ;
        try
          while true do

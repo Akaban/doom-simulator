@@ -1,6 +1,6 @@
 (* Projet PFA 2015-2016
  * Université Paris Sud L3
- * Par Abdelkader-Mahamat Djamal & Bryce Tichit *)
+ * Par Bryce Tichit *)
 open Bsp
 open Segment
 
