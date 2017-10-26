@@ -4,7 +4,7 @@ Projet de simulation d'un moteur graphique à la DOOM en OCaml.
 
 ### Getting started
  - A recent version of OCaml is required
- - Ocaml-findlib, ocamllex, ocamldep and menhir are required
+ - ocaml-findlib and ocamldep are required
  - If all requirements of the above are meet, compile the projet with make
  - The resulting binary will be "projet\_pfa"
  
