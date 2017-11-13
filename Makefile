@@ -16,7 +16,7 @@ LIBS = str.cma graphics.cma
 # bigarray.cma sdl.cma
 LIBOPTS = $(LIBS:.cma=.cmxa)
 
-EXEC = projet_pfa
+EXEC = doom
 
 OBJS = 	$(addprefix $(SRCDIR)/, colors.cmo trigo.cmo point.cmo options.cmo \
 	segment.cmo bsp.cmo physic.cmo \

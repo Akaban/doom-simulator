@@ -1,12 +1,13 @@
-# projetPFA
+# doomSimulator
 
-Projet de simulation d'un moteur graphique à la DOOM en OCaml.
+This project is a doom-like graphical engine simulator written in OCaml with the library Graphics
 
 ### Getting started
  - A recent version of OCaml is required
- - ocaml-findlib and ocamldep are required
- - If all requirements of the above are meet, compile the projet with make
- - The resulting binary will be "projet\_pfa"
+ - `ocaml-findlib` and `ocamldep` are required
+ - Ocaml Graphics (graphics.cma) is needed (sometimes installed with the base ocaml package, on ubuntu/debian its `libcamlimages-ocaml`)
+ - If all requirements of the above are meet, compile the projet with `make`
+ - The resulting binary will be named `doom`
  
 ## Example
 
@@ -30,7 +31,7 @@ ______
     650 500 400 800
 
 
-We can now start the program with ./projet\_pfa source\_file.lab
+We can now start the program with for example `./doom source\_file.lab`
 
 While in the game you can move using ZQSD (WASD not supported)
 
@@ -42,9 +43,11 @@ Example with lab1.lab in 3D:
 
 ![](./media/lab13D.png)
 
-A funny rainbow maze:
+A funny rainbow maze `./doom -maze -mode 3D -rainbow`:
 
 ![](./media/rainbowmaze.png)
+
+Change the maze's wall size with -mazewidth eg. `-mazewidth 300` for big walls.
 
 ### Keys in game
 
